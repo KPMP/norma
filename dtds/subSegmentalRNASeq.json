@@ -48,9 +48,9 @@
 				"label": "Dataset Type (Other)",
 				"type": "Text Field",
 				"required": true,
-				"linkedWith": "Dataset Type",
+				"linkedWith": "packageType",
 				"displayWhen": "Other",
-				"fieldName": "packageType"
+				"fieldName": "packageTypeOther"
 			},
 			{
 				"label": "Dataset Level",
@@ -65,9 +65,9 @@
 				"label": "Dataset Description",
 				"type": "Text Area",
 				"required": true,
-				"additionalProps": [{
+				"additionalProps": {
 					"placeholderText": "Describe the contents of this package"
-				}],
+				},
 				"fieldName": "description"
 			},
 			{
@@ -82,7 +82,7 @@
 		]
 	},
 	"typeSpecificElements": [{
-		"Sub-segment RNASeq": {
+		"Sub-segmental RNA-Seq": {
 			"sections": [{
 					"sectionHeader": "Tissue Processing",
 					"fields": [{
@@ -102,9 +102,9 @@
 							"type": "Date",
 							"required": true,
 							"validations": ["noFutureDate"],
-							"additionalProps": [{
+							"additionalProps": {
 								"placeholderText": "mm/dd/yyyy"
-							}],
+							},
 							"fieldName": "cryosectioningDate"
 						},
 						{
@@ -112,9 +112,9 @@
 							"type": "Date",
 							"required": true,
 							"validations": ["noFutureDate"],
-							"additionalProps": [{
+							"additionalProps": {
 								"placeholderText": "mm/dd/yyyy"
-							}],
+							},
 							"fieldName": "tissueSegmentationDissociationDate"
 						},
 						{
@@ -122,9 +122,9 @@
 							"type": "Date",
 							"required": true,
 							"validations": ["noFutureDate"],
-							"additionalProps": [{
+							"additionalProps": {
 								"placeholderText": "mm/dd/yyyy"
-							}],
+							},
 							"fieldName": "rnaIsolationDate"
 						},
 						{
@@ -166,9 +166,9 @@
 							"type": "Date",
 							"required": true,
 							"validations": ["noFutureDate"],
-							"additionalProps": [{
+							"additionalProps": {
 								"placeholderText": "mm/dd/yyyy"
-							}],
+							},
 							"fieldName": "bioanalyzerDate"
 						},
 						{
@@ -185,11 +185,12 @@
 							"otherAvailable": false,
 							"alphaSort": true,
 							"fieldName": "rnaYieldUnit",
-							"constrainedBy": "Dataset Type",
+							"constrainedBy": "packageType",
 							"constraints": {
 								"Bulk total/mRNA": ["ng/ul", "ug/ul"],
 								"Bulk microRNA": ["ng/ul"],
-								"Segmental miRNA": ["ug/ul"]
+								"Segmental miRNA": ["ug/ul"],
+								"Sub-segmental RNA-Seq": ["it works", "hooray"]
 							}
 						},
 						{
@@ -224,9 +225,9 @@
 							"type": "Date",
 							"required": true,
 							"validations": ["noFutureDate"],
-							"additionalProps": [{
+							"additionalProps": {
 								"placeholderText": "mm/dd/yyyy"
-							}],
+							},
 							"fieldName": "libraryPrepDate"
 						},
 						{
@@ -266,9 +267,9 @@
 							"label": "Processing Comments",
 							"type": "Text Area",
 							"required": false,
-							"additionalProps": [{
+							"additionalProps": {
 								"placeholderText": "Additional comments on the RNA Processing"
-							}],
+							},
 							"fieldName": "rnaProcessingComments"
 						}
 					]
@@ -304,9 +305,9 @@
 							"type": "Date",
 							"required": true,
 							"validations": ["noFutureDate"],
-							"additionalProps": [{
+							"additionalProps": {
 								"placeholderText": "mm/dd/yyyy"
-							}],
+							},
 							"fieldName": "sequencingDate"
 						},
 						{
@@ -334,8 +335,8 @@
 							"label": "Strand 2 Read Length (bp)",
 							"type": "Numeric",
 							"required": true,
-							"linkedWith": "Single / Paired End",
-							"displayWhen": "Paired",
+							"linkedWith": "singlePairedEnd",
+							"displayWhen": "Paired End",
 							"fieldName": "strand2ReadLength"
 						},
 						{
@@ -366,9 +367,9 @@
 							"label": "Sequencing Comments",
 							"type": "Text Area",
 							"required": false,
-							"additionalProps": [{
+							"additionalProps": {
 								"placeholderText": "Additional comments on the RNA Sequencing"
-							}],
+							},
 							"fieldName": "rnaSequencingComments"
 						}
 					]
@@ -430,9 +431,9 @@
 							"label": "Data Analysis Comments",
 							"type": "Text Area",
 							"required": false,
-							"additionalProps": [{
+							"additionalProps": {
 								"placeholderText": "Additional comments on the RNA Analysis"
-							}],
+							},
 							"fieldName": "rnaDataAnalysisComments"
 						}
 					]
