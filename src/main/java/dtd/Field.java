@@ -1,6 +1,7 @@
 package dtd;
 
 import java.util.Map;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -17,7 +18,7 @@ public class Field {
     String linkedWith;
     String displayWhen;
     Boolean alphaSort;
-    String[] values;
+    List<String> values;
     @JsonRawValue
     String additionalProps = null;
     String constrainedBy = null;
@@ -87,11 +88,11 @@ public class Field {
         this.alphaSort = alphaSort;
     }
 
-    public String[] getValues() {
+    public List<String> getValues() {
         return values;
     }
 
-    public void setValues(String[] values) {
+    public void setValues(List<String> values) {
         this.values = values;
     }
 

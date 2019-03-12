@@ -2,6 +2,7 @@ package sheets;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,33 +53,22 @@ public class MetadataSheetParser {
             element.setDataType(dataType);
             element.setCategory((String) (row.get(1)));
             typeSpecificElements.put(dataType, element);
-            element.setSectionMap(new HashMap<String, Section>());
+            element.setSectionMap(new LinkedHashMap<String, Section>());
         }
         return typeSpecificElements;
     }
 
     public List<Field> getStandardFields() throws IOException {
-        Map<String, Object> metadataColumnMap = getColumnMap(GENERAL_INFORMATION_SHEET);
-        String range = GENERAL_INFORMATION_SHEET + "!2:99";
-        List fields = new ArrayList<Field>();
-        ValueRange response = service.spreadsheets().values()
-                .get(this.spreadsheetId, range)
-                .execute();
-        List<List<Object>> rows = response.getValues();
-        //System.out.println("Found " + rows.size() + " rows in " + range);
-
-        for (List row : rows) {
-            Map metadataRow = populateMetadataMap(metadataColumnMap, row);
-            fields.add(convertMapToField(metadataRow));
-        }
-        return fields;
+        Map<String, List<String>> dropdownValueMap = getDropdownValues(VALUES_SHEET);
+        return getFieldsInSheet(GENERAL_INFORMATION_SHEET, new ArrayList<String>(), dropdownValueMap);
     }
 
     public void populateTypeSpecificElements(Map<String, TypeSpecificElement> typeSpecificElements) throws IOException {
         List<Field> fields = new ArrayList<Field>();
+        Map<String, List<String>> dropdownValueMap = getDropdownValues(VALUES_SHEET);
         List<String> dataTypes = convertTypeSpecificElementsToDataTypes(typeSpecificElements);
-        fields.addAll(getFieldsInSheet(TRANSCRIPTOMICS_SHEET, dataTypes));
-        fields.addAll(getFieldsInSheet(PROTEOMICS_SHEET, dataTypes));
+        fields.addAll(getFieldsInSheet(TRANSCRIPTOMICS_SHEET, dataTypes, dropdownValueMap));
+        fields.addAll(getFieldsInSheet(PROTEOMICS_SHEET, dataTypes, dropdownValueMap));
         for (Field field : fields) {
             for (Map.Entry<String, Boolean> dataType : field.getDataTypes().entrySet()) {
                 if (typeSpecificElements.containsKey(dataType.getKey()) && dataType.getValue()) {
@@ -97,7 +87,7 @@ public class MetadataSheetParser {
         }
     }
 
-    public List<Field> getFieldsInSheet(String sheetName, List<String> dataTypes) throws IOException {
+    public List<Field> getFieldsInSheet(String sheetName, List<String> dataTypes, Map<String, List<String>> dropdownValueMap) throws IOException {
         List<Field> fields = new ArrayList<Field>();
         Map<String, Object> metadataColumnMap = getColumnMap(sheetName);
         String range = sheetName + "!2:999";
@@ -108,14 +98,29 @@ public class MetadataSheetParser {
             Field field = convertMapToField(metadataRow);
             Map<String, Boolean> dataTypeMembership = getDataTypeMembership(metadataRow, dataTypes);
             field.setDataTypes(dataTypeMembership);
+            if (field.getType().equals("Drop-down") || field.getType().equals("Multi-select") && dropdownValueMap.containsKey(field.getLabel())) {
+                field.setValues(dropdownValueMap.get(field.getLabel()));
+            }
             fields.add(field);
         }
 
         return fields;
     }
 
-    private Map<String, ArrayList<String>> getDropdownValues() {
-        return null;
+    private Map<String, List<String>> getDropdownValues(String sheetName) throws IOException {
+        Map<String, List<String>> dropDownValueMap = new HashMap<String, List<String>>();
+        String range = sheetName + "!1:999";
+        List<List<Object>> rows = getRows(range);
+        for (List row : rows) {
+            String propertyName = (String) row.get(0);
+            String value = (String) row.get(2);
+            if (dropDownValueMap.containsKey(propertyName)) {
+                dropDownValueMap.get(propertyName).add(value);
+            } else {
+                dropDownValueMap.put(propertyName, new ArrayList<String>(Arrays.asList(value)));
+            }
+        }
+        return dropDownValueMap;
     }
 
     private Field convertMapToField(Map<String, Object> metadataRow) {
@@ -139,7 +144,7 @@ public class MetadataSheetParser {
     private Map<String, Boolean> getDataTypeMembership(Map<String, Object> metadataRow, List<String> dataTypes) {
         Map<String, Boolean> dataTypeMembership = new HashMap<String, Boolean>();
         for (String dataType: dataTypes) {
-            Boolean inDataType = convertToBoolean((String) metadataRow.get(dataTypes));
+            Boolean inDataType = convertToBoolean((String) metadataRow.get(dataType));
             dataTypeMembership.put(dataType, inDataType);
         }
         return dataTypeMembership;

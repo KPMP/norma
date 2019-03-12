@@ -1,7 +1,7 @@
 package dtd;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -12,7 +12,7 @@ public class TypeSpecificElement {
     @JsonIgnore
     String category;
     @JsonIgnore
-    HashMap<String, Section> sectionMap;
+    Map<String, Section> sectionMap;
 
     public List<Section> getSections() {
         return new ArrayList<Section>(sectionMap.values());
@@ -34,11 +34,11 @@ public class TypeSpecificElement {
         this.category = category;
     }
 
-    public HashMap<String, Section> getSectionMap() {
+    public Map<String, Section> getSectionMap() {
         return sectionMap;
     }
 
-    public void setSectionMap(HashMap<String, Section> sectionMap) {
+    public void setSectionMap(Map<String, Section> sectionMap) {
         this.sectionMap = sectionMap;
     }
 }
