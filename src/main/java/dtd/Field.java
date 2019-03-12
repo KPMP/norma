@@ -2,8 +2,11 @@ package dtd;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Field {
     String label;
     String type;
@@ -16,9 +19,13 @@ public class Field {
     Boolean alphaSort;
     String[] values;
     @JsonRawValue
-    String additionalProps;
-    String constrainedBy;
+    String additionalProps = null;
+    String constrainedBy = null;
     Map<String, String[]> constraints;
+    @JsonIgnore
+    Map<String, Boolean> dataTypes;
+    @JsonIgnore
+    String sectionName;
 
     public String getLabel() {
         return label;
@@ -53,7 +60,11 @@ public class Field {
     }
 
     public String[] getValidations() {
-        return validations;
+        if (validations == null) {
+            return null;
+        } else {
+            return validations;
+        }
     }
 
     public void setValidations(String[] validations) {
@@ -85,7 +96,12 @@ public class Field {
     }
 
     public String getAdditionalProps() {
-        return additionalProps;
+            if (additionalProps == null || additionalProps == "") {
+                return null;
+            } else {
+                return additionalProps;
+            }
+
     }
 
     public void setAdditionalProps (String additionalProps) {
@@ -122,5 +138,21 @@ public class Field {
 
     public void setDisplayWhen(String displayWhen) {
         this.displayWhen = displayWhen;
+    }
+
+    public Map<String, Boolean> getDataTypes() {
+        return dataTypes;
+    }
+
+    public void setDataTypes(Map<String, Boolean> dataTypes) {
+        this.dataTypes = dataTypes;
+    }
+
+    public String getSectionName() {
+        return sectionName;
+    }
+
+    public void setSectionName(String sectionName) {
+        this.sectionName = sectionName;
     }
 }
