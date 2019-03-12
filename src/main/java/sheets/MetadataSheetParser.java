@@ -74,47 +74,44 @@ public class MetadataSheetParser {
         return fields;
     }
 
-    public Map<String, TypeSpecificElement> populateTypeSpecificElements(Map<String, TypeSpecificElement> typeSpecificElements) throws IOException {
-        getFieldsInSheet(TRANSCRIPTOMICS_SHEET, typeSpecificElements);
-        getFieldsInSheet(PROTEOMICS_SHEET, typeSpecificElements);
-        return typeSpecificElements;
+    public void populateTypeSpecificElements(Map<String, TypeSpecificElement> typeSpecificElements) throws IOException {
+        List<Field> fields = new ArrayList<Field>();
+        List<String> dataTypes = convertTypeSpecificElementsToDataTypes(typeSpecificElements);
+        fields.addAll(getFieldsInSheet(TRANSCRIPTOMICS_SHEET, dataTypes));
+        fields.addAll(getFieldsInSheet(PROTEOMICS_SHEET, dataTypes));
+        for (Field field : fields) {
+            for (Map.Entry<String, Boolean> dataType : field.getDataTypes().entrySet()) {
+                if (typeSpecificElements.containsKey(dataType.getKey()) && dataType.getValue()) {
+                    if (typeSpecificElements.get(dataType.getKey()).getSectionMap().containsKey(field.getSectionName())) {
+                        typeSpecificElements.get(dataType.getKey()).getSectionMap().get(field.getSectionName()).getFields().add(field);
+                    } else {
+                        Section section = new Section();
+                        section.setSectionHeader(field.getSectionName());
+                        List<Field> fieldList = new ArrayList<Field>();
+                        fieldList.add(field);
+                        section.setFields(fieldList);
+                        typeSpecificElements.get(dataType.getKey()).getSectionMap().put(field.getSectionName(), section);
+                    }
+                }
+            }
+        }
     }
 
-    public Map<String, TypeSpecificElement> getFieldsInSheet(String sheetName, Map<String, TypeSpecificElement> typeSpecificElements) throws IOException {
+    public List<Field> getFieldsInSheet(String sheetName, List<String> dataTypes) throws IOException {
+        List<Field> fields = new ArrayList<Field>();
         Map<String, Object> metadataColumnMap = getColumnMap(sheetName);
         String range = sheetName + "!2:999";
         List<List<Object>> rows = getRows(range);
 
-        //System.out.println("Found " + rows.size() + " rows in " + range);
-
-        Map<String, Boolean> dataTypes = convertTypeSpecificElementsToDataTypes(typeSpecificElements);
-
         for (int i = 0; i < rows.size(); i++) {
             Map metadataRow = populateMetadataMap(metadataColumnMap, rows.get(i));
             Field field = convertMapToField(metadataRow);
-            populateDataTypes(metadataRow, field, dataTypes);
-            fillTypeSpecificElements(typeSpecificElements, field);
+            Map<String, Boolean> dataTypeMembership = getDataTypeMembership(metadataRow, dataTypes);
+            field.setDataTypes(dataTypeMembership);
+            fields.add(field);
         }
 
-        return typeSpecificElements;
-    }
-
-    private void fillTypeSpecificElements(Map<String, TypeSpecificElement> typeSpecificElements, Field field) {
-        Map<String, Boolean> fieldDataTypes = field.getDataTypes();
-        for (Map.Entry<String, Boolean> dataType: fieldDataTypes.entrySet()) {
-            if (typeSpecificElements.containsKey(dataType.getKey()) && dataType.getValue()) {
-                if (typeSpecificElements.get(dataType.getKey()).getSectionMap().containsKey(field.getSectionName())) {
-                    typeSpecificElements.get(dataType.getKey()).getSectionMap().get(field.getSectionName()).getFields().add(field);
-                } else {
-                    Section section = new Section();
-                    section.setSectionHeader(field.getSectionName());
-                    List<Field> fieldList = new ArrayList<Field>();
-                    fieldList.add(field);
-                    section.setFields(fieldList);
-                    typeSpecificElements.get(dataType.getKey()).getSectionMap().put(field.getSectionName(), section);
-                }
-            }
-        }
+        return fields;
     }
 
     private Map<String, ArrayList<String>> getDropdownValues() {
@@ -139,12 +136,13 @@ public class MetadataSheetParser {
         return field;
     }
 
-    private void populateDataTypes(Map<String, Object> metadataRow, Field field, Map<String, Boolean> dataTypes) {
-        for (Map.Entry<String, Boolean> dataType: dataTypes.entrySet()) {
-            Boolean inDataType = convertToBoolean((String) metadataRow.get(dataType.getKey()));
-            dataType.setValue(inDataType);
+    private Map<String, Boolean> getDataTypeMembership(Map<String, Object> metadataRow, List<String> dataTypes) {
+        Map<String, Boolean> dataTypeMembership = new HashMap<String, Boolean>();
+        for (String dataType: dataTypes) {
+            Boolean inDataType = convertToBoolean((String) metadataRow.get(dataTypes));
+            dataTypeMembership.put(dataType, inDataType);
         }
-        field.setDataTypes(dataTypes);
+        return dataTypeMembership;
     }
 
     private Map<String, Object> getColumnMap(String sheetName) throws IOException {
@@ -193,10 +191,10 @@ public class MetadataSheetParser {
         return rows;
     }
 
-    private Map<String, Boolean> convertTypeSpecificElementsToDataTypes(Map<String, TypeSpecificElement> typeSpecificElements) {
-        Map<String, Boolean> dataTypes = new HashMap<String, Boolean>();
+    private List<String> convertTypeSpecificElementsToDataTypes(Map<String, TypeSpecificElement> typeSpecificElements) {
+        List<String> dataTypes = new ArrayList<String>();
         for (Map.Entry<String, TypeSpecificElement> element: typeSpecificElements.entrySet()) {
-            dataTypes.put(element.getKey(), false);
+            dataTypes.add(element.getKey());
         }
         return dataTypes;
     }
