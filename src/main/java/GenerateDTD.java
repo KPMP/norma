@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -76,8 +75,6 @@ public class GenerateDTD {
         Map<String, TypeSpecificElement> typeSpecificElements = parser.getTypeSpecificElements();
         parser.populateTypeSpecificElements(typeSpecificElements);
         dtd.setTypeSpecificElements(typeSpecificElements);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String dtdJson = objectMapper.writeValueAsString(dtd);
-        System.out.println(dtdJson);
+        System.out.println(dtd.generateJSON());
     }
 }

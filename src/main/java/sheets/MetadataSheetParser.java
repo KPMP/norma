@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.LinkedHashMap;
-import java.util.Iterator;
 
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.ValueRange;
@@ -18,24 +18,27 @@ import dtd.TypeSpecificElement;
 
 public class MetadataSheetParser {
 
-    Sheets service;
-    String spreadsheetId;
-    public static final String GENERAL_INFORMATION_SHEET = "General Information";
-    public static final String TRANSCRIPTOMICS_SHEET = "Transcriptomics";
-    public static final String PROTEOMICS_SHEET = "Proteomics";
-    public static final String VALUES_SHEET = "Drop-down Values";
-    public static final String DATA_TYPE_SHEET = "Data Types";
+    private Sheets service;
+    private String spreadsheetId;
+    private static final String GENERAL_INFORMATION_SHEET = "General Information";
+    private static final String TRANSCRIPTOMICS_SHEET = "Transcriptomics";
+    private static final String PROTEOMICS_SHEET = "Proteomics";
+    private static final String VALUES_SHEET = "Drop-down Values";
+    private static final String DATA_TYPE_SHEET = "Data Types";
 
-    public static final String METADATA_MODULE_COLUMN_KEY = "Metadata Module";
-    public static final String LABEL_COLUMN_KEY = "Property";
-    public static final String TYPE_COLUMN_KEY = "Property Type";
-    public static final String FIELD_NAME_COLUMN_KEY = "Field Name";
-    public static final String REQUIRED_COLUMN_KEY = "Required?";
-    public static final String VALIDATIONS_COLUMN_KEY = "Validations?";
-    public static final String LINKED_WITH_COLUMN_KEY = "Linked With";
-    public static final String DISPLAY_WHEN_COLUMN_KEY = "Display When";
-    public static final String CONSTRAINTS_COLUMN_KEY = "Constraints";
-    public static final String ADDITIONAL_PROPS_COLUMN_KEY = "Additional Props";
+    private static final String METADATA_MODULE_COLUMN_KEY = "Metadata Module";
+    private static final String LABEL_COLUMN_KEY = "Property";
+    private static final String TYPE_COLUMN_KEY = "Property Type";
+    private static final String FIELD_NAME_COLUMN_KEY = "Field Name";
+    private static final String REQUIRED_COLUMN_KEY = "Required?";
+    private static final String VALIDATIONS_COLUMN_KEY = "Validations?";
+    private static final String LINKED_WITH_COLUMN_KEY = "Linked With";
+    private static final String DISPLAY_WHEN_COLUMN_KEY = "Display When";
+    private static final String CONSTRAINTS_COLUMN_KEY = "Constraints";
+    private static final String ADDITIONAL_PROPS_COLUMN_KEY = "Additional Props";
+
+    private static final String CELL_RANGE_NOHEADER = "1:999";
+    private static final String CELL_RANGE_HEADER = "2:999";
 
 
     public MetadataSheetParser(Sheets service, String spreadSheetId) throws IOException {
@@ -45,8 +48,8 @@ public class MetadataSheetParser {
 
     public Map<String, TypeSpecificElement> getTypeSpecificElements() throws IOException {
         Map typeSpecificElements = new HashMap<String, TypeSpecificElement>();
-        String range = DATA_TYPE_SHEET + "!2:999";
-        List<List<Object>> rows = getRows(range);
+        String range = getRange(DATA_TYPE_SHEET, CELL_RANGE_NOHEADER);
+        List <List<Object>> rows = getRows(range);
         for (List row: rows) {
             TypeSpecificElement element = new TypeSpecificElement();
             String dataType = (String) row.get(0);
@@ -59,16 +62,18 @@ public class MetadataSheetParser {
     }
 
     public List<Field> getStandardFields() throws IOException {
-        Map<String, List<String>> dropdownValueMap = getDropdownValues(VALUES_SHEET);
-        return getFieldsInSheet(GENERAL_INFORMATION_SHEET, new ArrayList<String>(), dropdownValueMap);
+        String dropdownRange = getRange(VALUES_SHEET, CELL_RANGE_NOHEADER);
+        String fieldsRange = getRange(GENERAL_INFORMATION_SHEET, CELL_RANGE_HEADER);
+        Map<String, List<String>> dropdownValueMap = getDropdownValues(dropdownRange);
+        return getFieldsInSheet(fieldsRange, new ArrayList<String>(), dropdownValueMap);
     }
 
     public void populateTypeSpecificElements(Map<String, TypeSpecificElement> typeSpecificElements) throws IOException {
         List<Field> fields = new ArrayList<Field>();
-        Map<String, List<String>> dropdownValueMap = getDropdownValues(VALUES_SHEET);
+        Map<String, List<String>> dropdownValueMap = getDropdownValues(getRange(VALUES_SHEET, CELL_RANGE_NOHEADER));
         List<String> dataTypes = convertTypeSpecificElementsToDataTypes(typeSpecificElements);
-        fields.addAll(getFieldsInSheet(TRANSCRIPTOMICS_SHEET, dataTypes, dropdownValueMap));
-        fields.addAll(getFieldsInSheet(PROTEOMICS_SHEET, dataTypes, dropdownValueMap));
+        fields.addAll(getFieldsInSheet(getRange(TRANSCRIPTOMICS_SHEET, CELL_RANGE_HEADER), dataTypes, dropdownValueMap));
+        fields.addAll(getFieldsInSheet(getRange(PROTEOMICS_SHEET, CELL_RANGE_HEADER), dataTypes, dropdownValueMap));
         for (Field field : fields) {
             for (Map.Entry<String, Boolean> dataType : field.getDataTypes().entrySet()) {
                 if (typeSpecificElements.containsKey(dataType.getKey()) && dataType.getValue()) {
@@ -87,14 +92,13 @@ public class MetadataSheetParser {
         }
     }
 
-    public List<Field> getFieldsInSheet(String sheetName, List<String> dataTypes, Map<String, List<String>> dropdownValueMap) throws IOException {
+    public List<Field> getFieldsInSheet(String range, List<String> dataTypes, Map<String, List<String>> dropdownValueMap) throws IOException {
         List<Field> fields = new ArrayList<Field>();
-        Map<String, Object> metadataColumnMap = getColumnMap(sheetName);
-        String range = sheetName + "!2:999";
+        Map<String, Object> metadataColumnMap = getColumnMap(range);
         List<List<Object>> rows = getRows(range);
 
         for (int i = 0; i < rows.size(); i++) {
-            Map metadataRow = populateMetadataMap(metadataColumnMap, rows.get(i));
+            Map metadataRow = fillMetadataRow(metadataColumnMap, rows.get(i));
             Field field = convertMapToField(metadataRow);
             Map<String, Boolean> dataTypeMembership = getDataTypeMembership(metadataRow, dataTypes);
             field.setDataTypes(dataTypeMembership);
@@ -107,9 +111,8 @@ public class MetadataSheetParser {
         return fields;
     }
 
-    private Map<String, List<String>> getDropdownValues(String sheetName) throws IOException {
+    public Map<String, List<String>> getDropdownValues(String range) throws IOException {
         Map<String, List<String>> dropDownValueMap = new HashMap<String, List<String>>();
-        String range = sheetName + "!1:999";
         List<List<Object>> rows = getRows(range);
         for (List row : rows) {
             String propertyName = (String) row.get(0);
@@ -123,7 +126,7 @@ public class MetadataSheetParser {
         return dropDownValueMap;
     }
 
-    private Field convertMapToField(Map<String, Object> metadataRow) {
+    public Field convertMapToField(Map<String, Object> metadataRow) {
         Field field = new Field();
         field.setType((String) metadataRow.get(TYPE_COLUMN_KEY));
         field.setLabel((String) metadataRow.get(LABEL_COLUMN_KEY));
@@ -141,7 +144,7 @@ public class MetadataSheetParser {
         return field;
     }
 
-    private Map<String, Boolean> getDataTypeMembership(Map<String, Object> metadataRow, List<String> dataTypes) {
+    public Map<String, Boolean> getDataTypeMembership(Map<String, Object> metadataRow, List<String> dataTypes) {
         Map<String, Boolean> dataTypeMembership = new HashMap<String, Boolean>();
         for (String dataType: dataTypes) {
             Boolean inDataType = convertToBoolean((String) metadataRow.get(dataType));
@@ -165,22 +168,23 @@ public class MetadataSheetParser {
         return columnMap;
     }
 
-    private Map populateMetadataMap(Map columnMap, List row) {
+    public Map<String, Object> fillMetadataRow(Map<String, Object> columnMap, List row) {
+        Map<String, Object> metaDataMap = new HashMap<String, Object>();
         Iterator it = columnMap.entrySet().iterator();
         int rowIndex = 0;
         while (it.hasNext()) {
             Map.Entry entry = (Map.Entry) it.next();
             if (rowIndex < row.size()) {
-                entry.setValue(row.get(rowIndex));
+                metaDataMap.put((String) entry.getKey(), row.get(rowIndex));
             } else {
-                entry.setValue(null);
+                metaDataMap.put((String) entry.getKey(), null);
             }
             rowIndex++;
         }
-        return columnMap;
+        return metaDataMap;
     }
 
-    private Boolean convertToBoolean(String value) {
+    public Boolean convertToBoolean(String value) {
         boolean booleanValue = false;
         if (value != null && (value.equals("Yes") || value.equals("Y"))) {
             booleanValue = true;
@@ -196,12 +200,18 @@ public class MetadataSheetParser {
         return rows;
     }
 
-    private List<String> convertTypeSpecificElementsToDataTypes(Map<String, TypeSpecificElement> typeSpecificElements) {
+    public List<String> convertTypeSpecificElementsToDataTypes(Map<String, TypeSpecificElement> typeSpecificElements) {
         List<String> dataTypes = new ArrayList<String>();
         for (Map.Entry<String, TypeSpecificElement> element: typeSpecificElements.entrySet()) {
             dataTypes.add(element.getKey());
         }
         return dataTypes;
     }
+
+    public String getRange(String sheetName, String cellRange) {
+        return sheetName + "!" + cellRange;
+    }
+
+
 
 }

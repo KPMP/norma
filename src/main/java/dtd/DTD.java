@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class DTD {
 
     Section standardFields;
@@ -27,5 +30,10 @@ public class DTD {
 
     public void setStandardFields(Section standardFields) {
         this.standardFields = standardFields;
+    }
+
+    public String generateJSON() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(this);
     }
 }
