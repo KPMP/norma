@@ -181,10 +181,14 @@ public class MetadataSheetParserTest {
 
     @Test
     public void testGetFieldsInSheet() throws IOException {
+        List<List<Object>> headerRows = new ArrayList<List<Object>>();
+        List<Object> headerRow1 = new ArrayList<Object>(Arrays.asList("Property", "Property Type"));
+        headerRows.add(headerRow1);
+
         List<List<Object>> rows = new ArrayList<List<Object>>();
-        List<Object> row1 = new ArrayList<Object>(Arrays.asList("Field 1"));
-        List<Object> row2 = new ArrayList<Object>(Arrays.asList("Field 2"));
-        List<Object> row3 = new ArrayList<Object>(Arrays.asList("Field 3"));
+        List<Object> row1 = new ArrayList<Object>(Arrays.asList("Field 1", ""));
+        List<Object> row2 = new ArrayList<Object>(Arrays.asList("Field 2", ""));
+        List<Object> row3 = new ArrayList<Object>(Arrays.asList("Field 3", ""));
         rows.add(row1);
         rows.add(row2);
         rows.add(row3);
@@ -192,15 +196,23 @@ public class MetadataSheetParserTest {
         Spreadsheets spreadsheets = mock(Spreadsheets.class);
         ValueRange valueRange = new ValueRange();
         valueRange.setValues(rows);
+        ValueRange valueRange2 = new ValueRange();
+        valueRange2.setValues(headerRows);
         Values values = mock(Values.class);
         Get get = mock(Get.class);
+        Get get2 = mock(Get.class);
+
+        List<String> dataTypes = new ArrayList<String>();
+        Map<String, List<String>> dropDownMap = new HashMap<String, List<String>>();
 
         when(sheets.spreadsheets()).thenReturn(spreadsheets);
         when(spreadsheets.values()).thenReturn(values);
-        when(values.get("",  "Range")).thenReturn(get);
+        when(values.get("",  "Sheet!1:1")).thenReturn(get2);
+        when(values.get("",  "Sheet!2:999")).thenReturn(get);
+        when(get2.execute()).thenReturn(valueRange2);
         when(get.execute()).thenReturn(valueRange);
 
-        List<Field> fields = parser.getFieldsInSheet("Range", null, null);
+        List<Field> fields = parser.getFieldsInSheet("Sheet", dataTypes, dropDownMap);
         assertEquals(fields.get(0).getLabel(), "Field 1");
         assertEquals(fields.get(1).getLabel(), "Field 2");
         assertEquals(fields.get(2).getLabel(), "Field 3");

@@ -92,10 +92,10 @@ public class MetadataSheetParser {
         }
     }
 
-    public List<Field> getFieldsInSheet(String range, List<String> dataTypes, Map<String, List<String>> dropdownValueMap) throws IOException {
+    public List<Field> getFieldsInSheet(String sheetName, List<String> dataTypes, Map<String, List<String>> dropdownValueMap) throws IOException {
         List<Field> fields = new ArrayList<Field>();
-        Map<String, Object> metadataColumnMap = getColumnMap(range);
-        List<List<Object>> rows = getRows(range);
+        Map<String, Object> metadataColumnMap = getColumnMap(sheetName);
+        List<List<Object>> rows = getRows(getRange(sheetName, CELL_RANGE_HEADER));
 
         for (int i = 0; i < rows.size(); i++) {
             Map metadataRow = fillMetadataRow(metadataColumnMap, rows.get(i));
