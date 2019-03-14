@@ -1,6 +1,10 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
@@ -78,6 +82,10 @@ public class GenerateDTD {
         List<Field> fields = parser.getAllFields(dataTypes);
         parser.populateTypeSpecificElements(typeSpecificElements, fields);
         dtd.setTypeSpecificElements(typeSpecificElements);
-        System.out.println(dtd.generateJSON());
+        File file = new File("dtd/metadataDTD.json");
+        FileWriter fstream = new FileWriter(file, false);
+        BufferedWriter out = new BufferedWriter(fstream);
+        out.write(dtd.generateJSON());
+        out.close();
     }
 }
