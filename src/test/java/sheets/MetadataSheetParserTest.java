@@ -7,12 +7,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Arrays;
-import java.util.ArrayList;
 
 import org.junit.After;
 import org.junit.Before;
@@ -27,6 +27,7 @@ import com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values.Get;
 import com.google.api.services.sheets.v4.model.ValueRange;
 
 import dtd.Field;
+import dtd.Section;
 import dtd.TypeSpecificElement;
 
 public class MetadataSheetParserTest {
@@ -204,6 +205,7 @@ public class MetadataSheetParserTest {
 
         List<String> dataTypes = new ArrayList<String>();
         Map<String, List<String>> dropDownMap = new HashMap<String, List<String>>();
+        dropDownMap.put("Field 1", new ArrayList<String>(Arrays.asList("One", "Two", "Other")));
 
         when(sheets.spreadsheets()).thenReturn(spreadsheets);
         when(spreadsheets.values()).thenReturn(values);
@@ -214,10 +216,84 @@ public class MetadataSheetParserTest {
 
         List<Field> fields = parser.getFieldsInSheet("Sheet", dataTypes, dropDownMap);
         assertEquals(fields.get(0).getLabel(), "Field 1");
+        assertTrue(fields.get(0).getOtherAvailable());
         assertEquals(fields.get(1).getLabel(), "Field 2");
         assertEquals(fields.get(2).getLabel(), "Field 3");
     }
 
+
+    @Test
+    public void testGetTypeSpecificElements() throws IOException {
+        List<List<Object>> rows = new ArrayList<List<Object>>();
+        List<Object> row1 = new ArrayList<Object>(Arrays.asList("Data Type 1", "Category 1"));
+        List<Object> row2 = new ArrayList<Object>(Arrays.asList("Data Type 2", "Category 1"));
+        List<Object> row3 = new ArrayList<Object>(Arrays.asList("Data Type 3", "Category 2"));
+        rows.add(row1);
+        rows.add(row2);
+        rows.add(row3);
+
+        Spreadsheets spreadsheets = mock(Spreadsheets.class);
+        ValueRange valueRange = new ValueRange();
+        valueRange.setValues(rows);
+        Values values = mock(Values.class);
+        Get get = mock(Get.class);
+
+        when(sheets.spreadsheets()).thenReturn(spreadsheets);
+        when(spreadsheets.values()).thenReturn(values);
+        when(values.get("", "Data Types!2:999")).thenReturn(get);
+        when(get.execute()).thenReturn(valueRange);
+
+        Map<String, TypeSpecificElement> typeSpecificElementMap = parser.getTypeSpecificElements();
+        assertEquals("Data Type 1", typeSpecificElementMap.get("Data Type 1").getDataType());
+        assertEquals("Data Type 2", typeSpecificElementMap.get("Data Type 2").getDataType());
+        assertEquals("Data Type 3", typeSpecificElementMap.get("Data Type 3").getDataType());
+
+    }
+
+    @Test
+    public void testPopulateTypeSpecificElements() throws IOException {
+        Map<String, TypeSpecificElement> typeSpecificElements = new LinkedHashMap<String, TypeSpecificElement>();
+
+        TypeSpecificElement typeSpecificElement1 = new TypeSpecificElement();
+        TypeSpecificElement typeSpecificElement2 = new TypeSpecificElement();
+
+        Map<String, Section> sectionMap1 = new LinkedHashMap<String, Section>();
+        Map<String, Section> sectionMap2 = new LinkedHashMap<String, Section>();
+
+        Section section2 = new Section();
+
+        section2.setFields(new ArrayList<Field>());
+
+        sectionMap2.put("Section 2", section2);
+        typeSpecificElement1.setSectionMap(sectionMap1);
+        typeSpecificElement2.setSectionMap(sectionMap2);
+        typeSpecificElements.put("Data Type 1", typeSpecificElement1);
+        typeSpecificElements.put("Data Type 2", typeSpecificElement2);
+
+        List<Field> fields = new ArrayList<Field>();
+        Field field1 = new Field();
+        Field field2 = new Field();
+        Map<String, Boolean> dataTypes1 = new HashMap<String, Boolean>();
+        Map<String, Boolean> dataTypes2 = new HashMap<String, Boolean>();
+        dataTypes1.put("Data Type 1", true);
+        dataTypes1.put("Data Type 2", false);
+        dataTypes2.put("Data Type 1", false);
+        dataTypes2.put("Data Type 2", true);
+        field1.setDataTypes(dataTypes1);
+        field1.setSectionName("Section 1");
+        field2.setDataTypes(dataTypes2);
+        field2.setSectionName("Section 2");
+        fields.add(field1);
+        fields.add(field2);
+        parser.populateTypeSpecificElements(typeSpecificElements, fields);
+        assertEquals(field1, typeSpecificElements.get("Data Type 1").getSectionMap().get("Section 1").getFields().get(0));
+        assertEquals(field2, typeSpecificElements.get("Data Type 2").getSectionMap().get("Section 2").getFields().get(0));
+    }
+
+    @Test
+    public void testGetRange() {
+        assertEquals("SheetName!1:100", parser.getRange("SheetName", "1:100"));
+    }
 
     @After
     public void tearDown() throws Exception {

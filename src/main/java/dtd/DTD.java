@@ -9,8 +9,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DTD {
 
+    String version;
     Section standardFields;
     Map<String, TypeSpecificElement> typeSpecificElements;
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     public List<Object> getTypeSpecificElements() {
         List<Object> typeSpecificElementList = new ArrayList<Object>();

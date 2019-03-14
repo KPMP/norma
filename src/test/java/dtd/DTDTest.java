@@ -29,6 +29,12 @@ public class DTDTest {
     }
 
     @Test
+    public void testSetVersion() {
+        dtd.setVersion("Version 0.1");
+        assertEquals("Version 0.1", dtd.getVersion());
+    }
+
+    @Test
     public void testSetTypeSpecificElements() {
         Map<String, TypeSpecificElement> typeSpecificElementMap = new HashMap();
         TypeSpecificElement typeSpecificElement = new TypeSpecificElement();
@@ -79,10 +85,11 @@ public class DTDTest {
         Map<String, TypeSpecificElement> typeSpecificElementMap = new HashMap<String, TypeSpecificElement>();
         typeSpecificElementMap.put("Data Type 1", typeSpecificElement);
 
+        dtd.setVersion("1.0");
         dtd.setStandardFields(section);
         dtd.setTypeSpecificElements(typeSpecificElementMap);
 
-        String expected = "{\"standardFields\":{\"sectionHeader\":\"Section Header\",\"fields\":[{\"label\":\"Label\",\"type\":\"Type\",\"required\":true,\"fieldName\":\"Field Name\",\"validations\":[\"Validation1\",\"Validation2\"],\"otherAvailable\":true,\"linkedWith\":\"Linked With\",\"displayWhen\":\"Display When\",\"alphaSort\":true,\"values\":[\"Value1\",\"Value2\"],\"additionalProps\":{\"additionalProp\":\"myProp\"},\"constrainedBy\":\"Constrained By\"}]},\"typeSpecificElements\":[{\"Data Type 1\":{\"sections\":[{\"sectionHeader\":\"Section Header\",\"fields\":[{\"label\":\"Label\",\"type\":\"Type\",\"required\":true,\"fieldName\":\"Field Name\",\"validations\":[\"Validation1\",\"Validation2\"],\"otherAvailable\":true,\"linkedWith\":\"Linked With\",\"displayWhen\":\"Display When\",\"alphaSort\":true,\"values\":[\"Value1\",\"Value2\"],\"additionalProps\":{\"additionalProp\":\"myProp\"},\"constrainedBy\":\"Constrained By\"}]}]}}]}";
+        String expected = "{\"version\":\"1.0\",\"standardFields\":{\"sectionHeader\":\"Section Header\",\"fields\":[{\"label\":\"Label\",\"type\":\"Type\",\"required\":true,\"fieldName\":\"Field Name\",\"validations\":[\"Validation1\",\"Validation2\"],\"otherAvailable\":true,\"linkedWith\":\"Linked With\",\"displayWhen\":\"Display When\",\"alphaSort\":true,\"values\":[\"Value1\",\"Value2\"],\"additionalProps\":{\"additionalProp\":\"myProp\"},\"constrainedBy\":\"Constrained By\"}]},\"typeSpecificElements\":[{\"Data Type 1\":{\"sections\":[{\"sectionHeader\":\"Section Header\",\"fields\":[{\"label\":\"Label\",\"type\":\"Type\",\"required\":true,\"fieldName\":\"Field Name\",\"validations\":[\"Validation1\",\"Validation2\"],\"otherAvailable\":true,\"linkedWith\":\"Linked With\",\"displayWhen\":\"Display When\",\"alphaSort\":true,\"values\":[\"Value1\",\"Value2\"],\"additionalProps\":{\"additionalProp\":\"myProp\"},\"constrainedBy\":\"Constrained By\"}]}]}}]}";
         assertEquals(expected, dtd.generateJSON());
 
     }
@@ -120,10 +127,11 @@ public class DTDTest {
         Map<String, TypeSpecificElement> typeSpecificElementMap = new HashMap<String, TypeSpecificElement>();
         typeSpecificElementMap.put("Data Type 1", typeSpecificElement);
 
+        dtd.setVersion("1.0");
         dtd.setStandardFields(section);
         dtd.setTypeSpecificElements(typeSpecificElementMap);
 
-        String expected = "{\"standardFields\":{\"sectionHeader\":\"Section Header\",\"fields\":[{\"label\":\"Label\",\"type\":\"Type\",\"required\":true,\"fieldName\":\"Field Name\",\"validations\":[\"Validation1\",\"Validation2\"],\"otherAvailable\":true,\"alphaSort\":true,\"values\":[\"Value1\",\"Value2\"],\"constrainedBy\":\"Constrained By\"}]},\"typeSpecificElements\":[{\"Data Type 1\":{\"sections\":[{\"sectionHeader\":\"Section Header\",\"fields\":[{\"label\":\"Label\",\"type\":\"Type\",\"required\":true,\"fieldName\":\"Field Name\",\"validations\":[\"Validation1\",\"Validation2\"],\"otherAvailable\":true,\"alphaSort\":true,\"values\":[\"Value1\",\"Value2\"],\"constrainedBy\":\"Constrained By\"}]}]}}]}";
+        String expected = "{\"version\":\"1.0\",\"standardFields\":{\"sectionHeader\":\"Section Header\",\"fields\":[{\"label\":\"Label\",\"type\":\"Type\",\"required\":true,\"fieldName\":\"Field Name\",\"validations\":[\"Validation1\",\"Validation2\"],\"otherAvailable\":true,\"alphaSort\":true,\"values\":[\"Value1\",\"Value2\"],\"constrainedBy\":\"Constrained By\"}]},\"typeSpecificElements\":[{\"Data Type 1\":{\"sections\":[{\"sectionHeader\":\"Section Header\",\"fields\":[{\"label\":\"Label\",\"type\":\"Type\",\"required\":true,\"fieldName\":\"Field Name\",\"validations\":[\"Validation1\",\"Validation2\"],\"otherAvailable\":true,\"alphaSort\":true,\"values\":[\"Value1\",\"Value2\"],\"constrainedBy\":\"Constrained By\"}]}]}}]}";
         assertEquals(expected, dtd.generateJSON());
 
     }

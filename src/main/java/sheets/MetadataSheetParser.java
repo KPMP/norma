@@ -48,7 +48,7 @@ public class MetadataSheetParser {
 
     public Map<String, TypeSpecificElement> getTypeSpecificElements() throws IOException {
         Map typeSpecificElements = new HashMap<String, TypeSpecificElement>();
-        String range = getRange(DATA_TYPE_SHEET, CELL_RANGE_NOHEADER);
+        String range = getRange(DATA_TYPE_SHEET, CELL_RANGE_HEADER);
         List <List<Object>> rows = getRows(range);
         for (List row: rows) {
             TypeSpecificElement element = new TypeSpecificElement();
@@ -63,17 +63,19 @@ public class MetadataSheetParser {
 
     public List<Field> getStandardFields() throws IOException {
         String dropdownRange = getRange(VALUES_SHEET, CELL_RANGE_NOHEADER);
-        String fieldsRange = getRange(GENERAL_INFORMATION_SHEET, CELL_RANGE_HEADER);
         Map<String, List<String>> dropdownValueMap = getDropdownValues(dropdownRange);
-        return getFieldsInSheet(fieldsRange, new ArrayList<String>(), dropdownValueMap);
+        return getFieldsInSheet(GENERAL_INFORMATION_SHEET, new ArrayList<String>(), dropdownValueMap);
     }
 
-    public void populateTypeSpecificElements(Map<String, TypeSpecificElement> typeSpecificElements) throws IOException {
-        List<Field> fields = new ArrayList<Field>();
+    public List<Field> getAllFields(List<String> dataTypes) throws IOException {
         Map<String, List<String>> dropdownValueMap = getDropdownValues(getRange(VALUES_SHEET, CELL_RANGE_NOHEADER));
-        List<String> dataTypes = convertTypeSpecificElementsToDataTypes(typeSpecificElements);
-        fields.addAll(getFieldsInSheet(getRange(TRANSCRIPTOMICS_SHEET, CELL_RANGE_HEADER), dataTypes, dropdownValueMap));
-        fields.addAll(getFieldsInSheet(getRange(PROTEOMICS_SHEET, CELL_RANGE_HEADER), dataTypes, dropdownValueMap));
+        List<Field> fields = new ArrayList<dtd.Field>();
+        fields.addAll(getFieldsInSheet(TRANSCRIPTOMICS_SHEET, dataTypes, dropdownValueMap));
+        fields.addAll(getFieldsInSheet(PROTEOMICS_SHEET, dataTypes, dropdownValueMap));
+        return fields;
+    }
+
+    public void populateTypeSpecificElements(Map<String, TypeSpecificElement> typeSpecificElements, List<Field> fields) throws IOException {
         for (Field field : fields) {
             for (Map.Entry<String, Boolean> dataType : field.getDataTypes().entrySet()) {
                 if (typeSpecificElements.containsKey(dataType.getKey()) && dataType.getValue()) {
@@ -103,7 +105,12 @@ public class MetadataSheetParser {
             Map<String, Boolean> dataTypeMembership = getDataTypeMembership(metadataRow, dataTypes);
             field.setDataTypes(dataTypeMembership);
             if (field.getType().equals("Drop-down") || field.getType().equals("Multi-select") && dropdownValueMap.containsKey(field.getLabel())) {
-                field.setValues(dropdownValueMap.get(field.getLabel()));
+                List<String> values = dropdownValueMap.get(field.getLabel());
+                if(values.contains("Other")) {
+                    field.setOtherAvailable(true);
+                    values.remove("Other");
+                }
+                field.setValues(values);
             }
             fields.add(field);
         }

@@ -26,7 +26,7 @@ import dtd.TypeSpecificElement;
 import sheets.MetadataSheetParser;
 
 public class GenerateDTD {
-    private static final String APPLICATION_NAME = "Google Sheets API Java Quickstart";
+    private static final String APPLICATION_NAME = "KPMP Convert Metadata Sheet to DTD ";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
 
@@ -66,6 +66,7 @@ public class GenerateDTD {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
         DTD dtd = new DTD();
+        dtd.setVersion("1.0");
         MetadataSheetParser parser = new MetadataSheetParser(service, spreadsheetId);
         List<Field> standardFields = parser.getStandardFields();
         Section standardFieldSection = new Section();
@@ -73,7 +74,9 @@ public class GenerateDTD {
         standardFieldSection.setFields(standardFields);
         dtd.setStandardFields(standardFieldSection);
         Map<String, TypeSpecificElement> typeSpecificElements = parser.getTypeSpecificElements();
-        parser.populateTypeSpecificElements(typeSpecificElements);
+        List<String> dataTypes = parser.convertTypeSpecificElementsToDataTypes(typeSpecificElements);
+        List<Field> fields = parser.getAllFields(dataTypes);
+        parser.populateTypeSpecificElements(typeSpecificElements, fields);
         dtd.setTypeSpecificElements(typeSpecificElements);
         System.out.println(dtd.generateJSON());
     }
