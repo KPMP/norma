@@ -75,7 +75,6 @@ public class GenerateDTD {
         List<Field> standardFields = parser.getStandardFields();
         Section standardFieldSection = new Section();
         standardFieldSection.setSectionHeader(standardFields.get(0).getSectionName());
-        standardFieldSection.setSectionHeader("Dataset Information");
         standardFieldSection.setFields(standardFields);
         dtd.setStandardFields(standardFieldSection);
         Map<String, TypeSpecificElement> typeSpecificElements = parser.getTypeSpecificElements();
