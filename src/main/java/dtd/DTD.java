@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -43,6 +44,7 @@ public class DTD {
 
     public String generateJSON() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.getFactory().configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
         return mapper.writeValueAsString(this);
     }
 }

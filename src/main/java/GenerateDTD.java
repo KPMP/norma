@@ -82,7 +82,7 @@ public class GenerateDTD {
         List<Field> fields = parser.getAllFields(dataTypes);
         parser.populateTypeSpecificElements(typeSpecificElements, fields);
         dtd.setTypeSpecificElements(typeSpecificElements);
-        File file = new File("metadataDTD.json");
+        File file = new File("metadataDTD" + dtd.getVersion() + ".json");
         FileWriter fstream = new FileWriter(file, false);
         BufferedWriter out = new BufferedWriter(fstream);
         out.write(dtd.generateJSON());
