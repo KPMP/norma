@@ -1,0 +1,12 @@
+*.iml
+.*_history
+.project
+.idea
+.gradle
+.mvn
+build
+/bin/
+.embedmongo
+.oracle_jre_usage
+*.log.*
+*.log
