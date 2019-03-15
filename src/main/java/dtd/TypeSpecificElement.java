@@ -8,11 +8,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class TypeSpecificElement {
     @JsonIgnore
-    String dataType;
+    private String dataType;
     @JsonIgnore
-    String category;
+    private String category;
     @JsonIgnore
-    Map<String, Section> sectionMap;
+    private Map<String, Section> sectionMap;
 
     public List<Section> getSections() {
         return new ArrayList<Section>(sectionMap.values());

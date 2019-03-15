@@ -3,8 +3,8 @@ package dtd;
 import java.util.List;
 
 public class Section {
-    String sectionHeader;
-    List<Field> fields;
+    private String sectionHeader;
+    private List<Field> fields;
 
     public String getSectionHeader() {
         return sectionHeader;

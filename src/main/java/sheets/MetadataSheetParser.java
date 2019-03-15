@@ -37,6 +37,10 @@ public class MetadataSheetParser {
     private static final String CONSTRAINTS_COLUMN_KEY = "Constraints";
     private static final String ADDITIONAL_PROPS_COLUMN_KEY = "Additional Props";
 
+    private static final String DROP_DOWN_TYPE_VALUE = "Drop-down";
+    private static final String MULTI_SELECT_TYPE_VALUE = "Multi-select";
+    private static final String OTHER_VALUE = "Other";
+
     private static final String CELL_RANGE_NOHEADER = "1:999";
     private static final String CELL_RANGE_HEADER = "2:999";
 
@@ -104,11 +108,12 @@ public class MetadataSheetParser {
             Field field = convertMapToField(metadataRow);
             Map<String, Boolean> dataTypeMembership = getDataTypeMembership(metadataRow, dataTypes);
             field.setDataTypes(dataTypeMembership);
-            if (field.getType().equals("Drop-down") || field.getType().equals("Multi-select") && dropdownValueMap.containsKey(field.getLabel())) {
+            if (field.getType().equals(DROP_DOWN_TYPE_VALUE) || field.getType().equals(MULTI_SELECT_TYPE_VALUE) && dropdownValueMap.containsKey(field.getLabel())) {
                 List<String> values = dropdownValueMap.get(field.getLabel());
-                if(values.contains("Other")) {
+                if(values.contains(OTHER_VALUE)) {
+                    System.out.println("here");
                     field.setOtherAvailable(true);
-                    values.remove("Other");
+                    values.remove(OTHER_VALUE);
                 }
                 field.setValues(values);
             }

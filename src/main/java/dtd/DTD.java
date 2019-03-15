@@ -9,9 +9,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DTD {
 
-    String version;
-    Section standardFields;
-    Map<String, TypeSpecificElement> typeSpecificElements;
+    private String version;
+    private Section standardFields;
+    private Map<String, TypeSpecificElement> typeSpecificElements;
 
     public String getVersion() {
         return version;

@@ -9,24 +9,24 @@ import com.fasterxml.jackson.annotation.JsonRawValue;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Field {
-    String label;
-    String type;
-    Boolean required;
-    String fieldName;
-    String[] validations;
-    Boolean otherAvailable;
-    String linkedWith;
-    String displayWhen;
-    Boolean alphaSort;
-    List<String> values;
+    private String label;
+    private String type;
+    private Boolean required;
+    private String fieldName;
+    private String[] validations;
+    private Boolean otherAvailable;
+    private String linkedWith;
+    private String displayWhen;
+    private Boolean alphaSort;
+    private List<String> values;
     @JsonRawValue
-    String additionalProps = null;
-    String constrainedBy = null;
-    Map<String, String[]> constraints;
+    private String additionalProps = null;
+    private String constrainedBy = null;
+    private Map<String, String[]> constraints;
     @JsonIgnore
-    Map<String, Boolean> dataTypes;
+    private Map<String, Boolean> dataTypes;
     @JsonIgnore
-    String sectionName;
+    private String sectionName;
 
     public String getLabel() {
         return label;

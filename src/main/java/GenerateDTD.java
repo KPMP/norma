@@ -74,6 +74,7 @@ public class GenerateDTD {
         MetadataSheetParser parser = new MetadataSheetParser(service, spreadsheetId);
         List<Field> standardFields = parser.getStandardFields();
         Section standardFieldSection = new Section();
+        standardFieldSection.setSectionHeader(standardFields.get(0).getSectionName());
         standardFieldSection.setSectionHeader("Dataset Information");
         standardFieldSection.setFields(standardFields);
         dtd.setStandardFields(standardFieldSection);

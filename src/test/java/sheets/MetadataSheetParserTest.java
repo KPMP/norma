@@ -187,7 +187,7 @@ public class MetadataSheetParserTest {
         headerRows.add(headerRow1);
 
         List<List<Object>> rows = new ArrayList<List<Object>>();
-        List<Object> row1 = new ArrayList<Object>(Arrays.asList("Field 1", ""));
+        List<Object> row1 = new ArrayList<Object>(Arrays.asList("Field 1", "Drop-down"));
         List<Object> row2 = new ArrayList<Object>(Arrays.asList("Field 2", ""));
         List<Object> row3 = new ArrayList<Object>(Arrays.asList("Field 3", ""));
         rows.add(row1);
