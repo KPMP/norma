@@ -10,15 +10,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DTD {
 
-    private String version;
+    private Double version;
     private Section standardFields;
     private Map<String, TypeSpecificElement> typeSpecificElements;
 
-    public String getVersion() {
+    public Double getVersion() {
         return version;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(Double version) {
         this.version = version;
     }
 

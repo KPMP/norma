@@ -70,7 +70,7 @@ public class GenerateDTD {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
         DTD dtd = new DTD();
-        dtd.setVersion("1.0");
+        dtd.setVersion(1.0);
         MetadataSheetParser parser = new MetadataSheetParser(service, spreadsheetId);
         List<Field> standardFields = parser.getStandardFields();
         Section standardFieldSection = new Section();
