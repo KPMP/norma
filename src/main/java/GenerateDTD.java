@@ -70,7 +70,7 @@ public class GenerateDTD {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
         DTD dtd = new DTD();
-        dtd.setVersion("1.0");
+        dtd.setVersion(1.0);
         MetadataSheetParser parser = new MetadataSheetParser(service, spreadsheetId);
         List<Field> standardFields = parser.getStandardFields();
         Section standardFieldSection = new Section();
@@ -82,7 +82,7 @@ public class GenerateDTD {
         List<Field> fields = parser.getAllFields(dataTypes);
         parser.populateTypeSpecificElements(typeSpecificElements, fields);
         dtd.setTypeSpecificElements(typeSpecificElements);
-        File file = new File("metadataDTD.json");
+        File file = new File("metadataDTD" + dtd.getVersion() + ".json");
         FileWriter fstream = new FileWriter(file, false);
         BufferedWriter out = new BufferedWriter(fstream);
         out.write(dtd.generateJSON());
