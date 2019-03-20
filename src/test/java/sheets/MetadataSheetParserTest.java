@@ -72,7 +72,6 @@ public class MetadataSheetParserTest {
         assertEquals(new String[]{"valid1","valid2"}, field.getValidations());
         assertEquals("Linky", field.getLinkedWith());
         assertEquals("When?", field.getDisplayWhen());
-        assertEquals("Straints", field.getConstrainedBy());
         assertEquals("Namey Name", field.getFieldName());
         assertEquals("{\"Proppy Prop\": \"Proppy\"}", field.getAdditionalProps());
 
@@ -183,12 +182,12 @@ public class MetadataSheetParserTest {
     @Test
     public void testGetFieldsInSheet() throws IOException {
         List<List<Object>> headerRows = new ArrayList<List<Object>>();
-        List<Object> headerRow1 = new ArrayList<Object>(Arrays.asList("Property", "Property Type"));
+        List<Object> headerRow1 = new ArrayList<Object>(Arrays.asList("Property", "Property Type", "Linked With", "Field Name"));
         headerRows.add(headerRow1);
 
         List<List<Object>> rows = new ArrayList<List<Object>>();
-        List<Object> row1 = new ArrayList<Object>(Arrays.asList("Field 1", "Drop-down"));
-        List<Object> row2 = new ArrayList<Object>(Arrays.asList("Field 2", ""));
+        List<Object> row1 = new ArrayList<Object>(Arrays.asList("Field 1", "Drop-down", "Field 2"));
+        List<Object> row2 = new ArrayList<Object>(Arrays.asList("Field 2", "", "", "field2Name"));
         List<Object> row3 = new ArrayList<Object>(Arrays.asList("Field 3", ""));
         rows.add(row1);
         rows.add(row2);
@@ -216,6 +215,7 @@ public class MetadataSheetParserTest {
 
         List<Field> fields = parser.getFieldsInSheet("Sheet", dataTypes, dropDownMap);
         assertEquals(fields.get(0).getLabel(), "Field 1");
+        assertEquals(fields.get(0).getLinkedWith(), "field2Name");
         assertTrue(fields.get(0).getOtherAvailable());
         assertEquals(fields.get(1).getLabel(), "Field 2");
         assertEquals(fields.get(2).getLabel(), "Field 3");
