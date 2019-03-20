@@ -20,7 +20,7 @@ public class MetadataSheetParser {
 
     private Sheets service;
     private String spreadsheetId;
-    private static final String GENERAL_INFORMATION_SHEET = "General Information";
+    private static final String GENERAL_INFORMATION_SHEET = "Dataset Information";
     private static final String TRANSCRIPTOMICS_SHEET = "Transcriptomics";
     private static final String PROTEOMICS_SHEET = "Proteomics";
     private static final String VALUES_SHEET = "Drop-down Values";
@@ -111,13 +111,22 @@ public class MetadataSheetParser {
             if (field.getType().equals(DROP_DOWN_TYPE_VALUE) || field.getType().equals(MULTI_SELECT_TYPE_VALUE) && dropdownValueMap.containsKey(field.getLabel())) {
                 List<String> values = dropdownValueMap.get(field.getLabel());
                 if(values.contains(OTHER_VALUE)) {
-                    System.out.println("here");
                     field.setOtherAvailable(true);
                     values.remove(OTHER_VALUE);
                 }
                 field.setValues(values);
             }
             fields.add(field);
+        }
+
+        for (Field field : fields) {
+            if (field.getLinkedWith() != null) {
+                for (Field field2: fields) {
+                    if (field.getLinkedWith().equals(field2.getLabel())) {
+                        field.setLinkedWith(field2.getFieldName());
+                    }
+                }
+            }
         }
 
         return fields;
@@ -143,7 +152,6 @@ public class MetadataSheetParser {
         field.setType((String) metadataRow.get(TYPE_COLUMN_KEY));
         field.setLabel((String) metadataRow.get(LABEL_COLUMN_KEY));
         field.setAdditionalProps((String) metadataRow.get(ADDITIONAL_PROPS_COLUMN_KEY));
-        field.setConstrainedBy((String) metadataRow.get(CONSTRAINTS_COLUMN_KEY));
         field.setLinkedWith((String) metadataRow.get(LINKED_WITH_COLUMN_KEY));
         field.setFieldName((String) metadataRow.get(FIELD_NAME_COLUMN_KEY));
         field.setRequired(convertToBoolean((String) metadataRow.get(REQUIRED_COLUMN_KEY)));
