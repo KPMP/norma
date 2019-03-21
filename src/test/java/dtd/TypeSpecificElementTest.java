@@ -45,4 +45,10 @@ public class TypeSpecificElementTest {
         typeSpecificElement.setSectionMap(sectionMap);
         assertEquals(sectionMap, typeSpecificElement.getSectionMap());
     }
+
+    @Test
+    public void testSetVersion() {
+        typeSpecificElement.setVersion(1.0);
+        assertEquals(1.0, typeSpecificElement.getVersion(), 0.001);
+    }
 }

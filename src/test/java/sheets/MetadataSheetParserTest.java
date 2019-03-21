@@ -43,6 +43,24 @@ public class MetadataSheetParserTest {
     }
 
     @Test
+    public void testGetVersion() throws Exception {
+        List<Object> row = new ArrayList<Object>(Arrays.asList("1.0"));
+        List<List<Object>> rows = new ArrayList<List<Object>>(Arrays.asList(row));
+        Spreadsheets spreadsheets = mock(Spreadsheets.class);
+        ValueRange valueRange = new ValueRange();
+        valueRange.setValues(rows);
+        Values values = mock(Values.class);
+        Get get = mock(Get.class);
+
+        when(sheets.spreadsheets()).thenReturn(spreadsheets);
+        when(spreadsheets.values()).thenReturn(values);
+        when(values.get("", "Version!A1:A1")).thenReturn(get);
+        when(get.execute()).thenReturn(valueRange);
+
+        assertEquals(1.0, parser.getVersion(), 0.001);
+    }
+
+    @Test
     public void testConvertMapToField() {
         Map<String, Object> metadataRow = new HashMap<String, Object>();
         metadataRow.put("Metadata Module", "A Module");
@@ -225,9 +243,9 @@ public class MetadataSheetParserTest {
     @Test
     public void testGetTypeSpecificElements() throws IOException {
         List<List<Object>> rows = new ArrayList<List<Object>>();
-        List<Object> row1 = new ArrayList<Object>(Arrays.asList("Data Type 1", "Category 1"));
-        List<Object> row2 = new ArrayList<Object>(Arrays.asList("Data Type 2", "Category 1"));
-        List<Object> row3 = new ArrayList<Object>(Arrays.asList("Data Type 3", "Category 2"));
+        List<Object> row1 = new ArrayList<Object>(Arrays.asList("Data Type 1", "Category 1", "1.0"));
+        List<Object> row2 = new ArrayList<Object>(Arrays.asList("Data Type 2", "Category 1", "3.0"));
+        List<Object> row3 = new ArrayList<Object>(Arrays.asList("Data Type 3", "Category 2", "2.0"));
         rows.add(row1);
         rows.add(row2);
         rows.add(row3);
