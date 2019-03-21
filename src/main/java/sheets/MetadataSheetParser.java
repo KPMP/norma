@@ -13,6 +13,7 @@ import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.ValueRange;
 
 import dtd.Field;
+import dtd.PackageTypeIcon;
 import dtd.Section;
 import dtd.TypeSpecificElement;
 
@@ -55,6 +56,25 @@ public class MetadataSheetParser {
         this.spreadsheetId = spreadSheetId;
     }
 
+    public List<PackageTypeIcon> getPackageTypeIcons() throws IOException {
+        Map<String, PackageTypeIcon> packageTypeIconsMap = new HashMap<String, PackageTypeIcon>();
+        String range = getRange(DATA_TYPE_SHEET, CELL_RANGE_HEADER);
+        List <List<Object>> rows = getRows(range);
+        for (List row: rows) {
+            String packageType = (String) row.get(0);
+            String iconType = (String) row.get(3);
+            if (packageTypeIconsMap.containsKey(iconType)) {
+                packageTypeIconsMap.get(iconType).getPackageTypes().add(packageType);
+            } else {
+                PackageTypeIcon packageTypeIcon = new PackageTypeIcon();
+                packageTypeIcon.setIconType(iconType);
+                packageTypeIcon.setPackageTypes((new ArrayList<String>(Arrays.asList(packageType))));
+                packageTypeIconsMap.put(iconType, packageTypeIcon);
+            }
+        }
+        return new ArrayList(packageTypeIconsMap.values());
+    }
+
     public Double getMetadataVersion() throws IOException {
         String range = getRange(VERSION_SHEET, METADATA_VERSION_RANGE);
         List <List<Object>> rows = getRows(range);
@@ -74,13 +94,16 @@ public class MetadataSheetParser {
         String range = getRange(DATA_TYPE_SHEET, CELL_RANGE_HEADER);
         List <List<Object>> rows = getRows(range);
         for (List row: rows) {
-            TypeSpecificElement element = new TypeSpecificElement();
-            String dataType = (String) row.get(0);
-            element.setDataType(dataType);
-            element.setCategory((String) (row.get(1)));
-            element.setVersion(Double.parseDouble((String) row.get(2)));
-            typeSpecificElements.put(dataType, element);
-            element.setSectionMap(new LinkedHashMap<String, Section>());
+            String versionRow = (String) row.get(2);
+            if (!versionRow.isEmpty()) {
+                TypeSpecificElement element = new TypeSpecificElement();
+                String dataType = (String) row.get(0);
+                element.setDataType(dataType);
+                element.setCategory((String) (row.get(1)));
+                element.setVersion(Double.parseDouble((String) row.get(2)));
+                typeSpecificElements.put(dataType, element);
+                element.setSectionMap(new LinkedHashMap<String, Section>());
+            }
         }
         return typeSpecificElements;
     }

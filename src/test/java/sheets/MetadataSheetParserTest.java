@@ -27,6 +27,7 @@ import com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values.Get;
 import com.google.api.services.sheets.v4.model.ValueRange;
 
 import dtd.Field;
+import dtd.PackageTypeIcon;
 import dtd.Section;
 import dtd.TypeSpecificElement;
 
@@ -40,6 +41,35 @@ public class MetadataSheetParserTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         parser = new MetadataSheetParser(sheets, "");
+    }
+
+    @Test
+    public void testGetPackageTypeIcons() throws Exception{
+        List<List<Object>> rows = new ArrayList<List<Object>>();
+        List<Object> row1 = new ArrayList<Object>(Arrays.asList("Data Type 1", "Category 1", "1.0", "Icon 1"));
+        List<Object> row2 = new ArrayList<Object>(Arrays.asList("Data Type 2", "Category 1", "3.0", "Icon 1"));
+        List<Object> row3 = new ArrayList<Object>(Arrays.asList("Data Type 3", "Category 2", "2.0", "Icon 2"));
+        rows.add(row1);
+        rows.add(row2);
+        rows.add(row3);
+
+        Spreadsheets spreadsheets = mock(Spreadsheets.class);
+        ValueRange valueRange = new ValueRange();
+        valueRange.setValues(rows);
+        Values values = mock(Values.class);
+        Get get = mock(Get.class);
+
+        when(sheets.spreadsheets()).thenReturn(spreadsheets);
+        when(spreadsheets.values()).thenReturn(values);
+        when(values.get("", "Data Types!2:999")).thenReturn(get);
+        when(get.execute()).thenReturn(valueRange);
+
+        List<PackageTypeIcon> packageTypeIcons = parser.getPackageTypeIcons();
+        assertEquals("Icon 1", packageTypeIcons.get(0).getIconType());
+        assertEquals("Icon 2", packageTypeIcons.get(1).getIconType());
+        assertEquals("Data Type 1", packageTypeIcons.get(0).getPackageTypes().get(0));
+        assertEquals("Data Type 2", packageTypeIcons.get(0).getPackageTypes().get(1));
+        assertEquals("Data Type 3", packageTypeIcons.get(1).getPackageTypes().get(0));
     }
 
     @Test

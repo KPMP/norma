@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -24,6 +25,7 @@ import com.google.api.services.sheets.v4.SheetsScopes;
 
 import dtd.DTD;
 import dtd.Field;
+import dtd.PackageTypeIcon;
 import dtd.StandardFields;
 import dtd.TypeSpecificElement;
 import sheets.MetadataSheetParser;
@@ -77,6 +79,7 @@ public class GenerateDTD {
         standardFieldSection.setFields(standardFields);
         standardFieldSection.setVersion(parser.getDatasetInformationVersion());
         dtd.setStandardFields(standardFieldSection);
+        List<PackageTypeIcon> packageTypeIcons = parser.getPackageTypeIcons();
         Map<String, TypeSpecificElement> typeSpecificElements = parser.getTypeSpecificElements();
         List<String> dataTypes = parser.convertTypeSpecificElementsToDataTypes(typeSpecificElements);
         List<Field> fields = parser.getAllFields(dataTypes);
@@ -87,6 +90,12 @@ public class GenerateDTD {
         FileWriter fstream = new FileWriter(file, false);
         BufferedWriter out = new BufferedWriter(fstream);
         out.write(dtd.generateJSON());
+        out.close();
+        file = new File(DTD_Path + File.separator + "packageTypeIcons.json");
+        fstream = new FileWriter(file, false);
+        out = new BufferedWriter(fstream);
+        ObjectMapper mapper = new ObjectMapper();
+        out.write(mapper.writeValueAsString(packageTypeIcons));
         out.close();
     }
 }
