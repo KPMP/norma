@@ -25,6 +25,7 @@ public class MetadataSheetParser {
     private static final String PROTEOMICS_SHEET = "Proteomics";
     private static final String VALUES_SHEET = "Drop-down Values";
     private static final String DATA_TYPE_SHEET = "Data Types";
+    private static final String VERSION_SHEET = "Version";
 
     private static final String METADATA_MODULE_COLUMN_KEY = "Metadata Module";
     private static final String LABEL_COLUMN_KEY = "Property";
@@ -50,6 +51,13 @@ public class MetadataSheetParser {
         this.spreadsheetId = spreadSheetId;
     }
 
+    public Double getVersion() throws IOException {
+        String range = getRange(VERSION_SHEET, "A1:A1");
+        List <List<Object>> rows = getRows(range);
+        Double version = Double.parseDouble((String)rows.get(0).get(0));
+        return version;
+    }
+
     public Map<String, TypeSpecificElement> getTypeSpecificElements() throws IOException {
         Map typeSpecificElements = new HashMap<String, TypeSpecificElement>();
         String range = getRange(DATA_TYPE_SHEET, CELL_RANGE_HEADER);
@@ -59,6 +67,7 @@ public class MetadataSheetParser {
             String dataType = (String) row.get(0);
             element.setDataType(dataType);
             element.setCategory((String) (row.get(1)));
+            element.setVersion(Double.parseDouble((String) row.get(2)));
             typeSpecificElements.put(dataType, element);
             element.setSectionMap(new LinkedHashMap<String, Section>());
         }

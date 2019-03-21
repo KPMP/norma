@@ -33,6 +33,7 @@ public class GenerateDTD {
     private static final String APPLICATION_NAME = "KPMP Convert Metadata Sheet to DTD ";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
+    private static final String DTD_Path = "dtds";
 
     /**
      * Global instance of the scopes required by this quickstart.
@@ -70,7 +71,6 @@ public class GenerateDTD {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
         DTD dtd = new DTD();
-        dtd.setVersion(1.0);
         MetadataSheetParser parser = new MetadataSheetParser(service, spreadsheetId);
         List<Field> standardFields = parser.getStandardFields();
         Section standardFieldSection = new Section();
@@ -81,8 +81,9 @@ public class GenerateDTD {
         List<String> dataTypes = parser.convertTypeSpecificElementsToDataTypes(typeSpecificElements);
         List<Field> fields = parser.getAllFields(dataTypes);
         parser.populateTypeSpecificElements(typeSpecificElements, fields);
+        dtd.setVersion(parser.getVersion());
         dtd.setTypeSpecificElements(typeSpecificElements);
-        File file = new File("metadataDTD" + dtd.getVersion() + ".json");
+        File file = new File(DTD_Path + File.separator + "metadataDTD" + dtd.getVersion() + ".json");
         FileWriter fstream = new FileWriter(file, false);
         BufferedWriter out = new BufferedWriter(fstream);
         out.write(dtd.generateJSON());

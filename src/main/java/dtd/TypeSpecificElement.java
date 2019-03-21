@@ -13,6 +13,8 @@ public class TypeSpecificElement {
     private String category;
     @JsonIgnore
     private Map<String, Section> sectionMap;
+    private Double version;
+
 
     public List<Section> getSections() {
         return new ArrayList<Section>(sectionMap.values());
@@ -40,5 +42,13 @@ public class TypeSpecificElement {
 
     public void setSectionMap(Map<String, Section> sectionMap) {
         this.sectionMap = sectionMap;
+    }
+
+    public Double getVersion() {
+        return version;
+    }
+
+    public void setVersion(Double version) {
+        this.version = version;
     }
 }
