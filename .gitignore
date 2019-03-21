@@ -10,3 +10,4 @@ build
 .oracle_jre_usage
 *.log.*
 *.log
+**.DS_Store
