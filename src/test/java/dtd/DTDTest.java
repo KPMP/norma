@@ -47,9 +47,9 @@ public class DTDTest {
 
     @Test
     public void testSetSection() {
-        Section section = new Section();
-        dtd.setStandardFields(section);
-        assertEquals(section, dtd.getStandardFields());
+        StandardFields standardFields = new StandardFields();
+        dtd.setStandardFields(standardFields);
+        assertEquals(standardFields, dtd.getStandardFields());
     }
 
     @Test
@@ -73,6 +73,11 @@ public class DTDTest {
         field.setOtherAvailable(true);
         field.setSectionName("Section");
 
+        StandardFields standardFields = new StandardFields();
+        standardFields.setSectionHeader("Section Header");
+        standardFields.setFields(new ArrayList<Field>(Arrays.asList(field)));
+        standardFields.setVersion(1.0);
+
         Section section = new Section();
         section.setSectionHeader("Section Header");
         section.setFields(new ArrayList<Field>(Arrays.asList(field)));
@@ -87,10 +92,10 @@ public class DTDTest {
         typeSpecificElementMap.put("Data Type 1", typeSpecificElement);
 
         dtd.setVersion(1.0);
-        dtd.setStandardFields(section);
+        dtd.setStandardFields(standardFields);
         dtd.setTypeSpecificElements(typeSpecificElementMap);
 
-        String expected = "{\"version\":1.0,\"standardFields\":{\"sectionHeader\":\"Section Header\",\"fields\":[{\"label\":\"Label\",\"type\":\"Type\",\"required\":true,\"fieldName\":\"Field Name\",\"validations\":[\"Validation1\",\"Validation2\"],\"otherAvailable\":true,\"linkedWith\":\"Linked With\",\"displayWhen\":\"Display When\",\"alphaSort\":true,\"values\":[\"Value1\",\"Value2\"],\"additionalProps\":{\"additionalProp\":\"myProp\"},\"constrainedBy\":\"Constrained By\"}]},\"typeSpecificElements\":[{\"Data Type 1\":{\"version\":1.0,\"sections\":[{\"sectionHeader\":\"Section Header\",\"fields\":[{\"label\":\"Label\",\"type\":\"Type\",\"required\":true,\"fieldName\":\"Field Name\",\"validations\":[\"Validation1\",\"Validation2\"],\"otherAvailable\":true,\"linkedWith\":\"Linked With\",\"displayWhen\":\"Display When\",\"alphaSort\":true,\"values\":[\"Value1\",\"Value2\"],\"additionalProps\":{\"additionalProp\":\"myProp\"},\"constrainedBy\":\"Constrained By\"}]}]}}]}";
+        String expected = "{\"version\":1.0,\"standardFields\":{\"sectionHeader\":\"Section Header\",\"fields\":[{\"label\":\"Label\",\"type\":\"Type\",\"required\":true,\"fieldName\":\"Field Name\",\"validations\":[\"Validation1\",\"Validation2\"],\"otherAvailable\":true,\"linkedWith\":\"Linked With\",\"displayWhen\":\"Display When\",\"alphaSort\":true,\"values\":[\"Value1\",\"Value2\"],\"additionalProps\":{\"additionalProp\":\"myProp\"},\"constrainedBy\":\"Constrained By\"}],\"version\":1.0},\"typeSpecificElements\":[{\"Data Type 1\":{\"version\":1.0,\"sections\":[{\"sectionHeader\":\"Section Header\",\"fields\":[{\"label\":\"Label\",\"type\":\"Type\",\"required\":true,\"fieldName\":\"Field Name\",\"validations\":[\"Validation1\",\"Validation2\"],\"otherAvailable\":true,\"linkedWith\":\"Linked With\",\"displayWhen\":\"Display When\",\"alphaSort\":true,\"values\":[\"Value1\",\"Value2\"],\"additionalProps\":{\"additionalProp\":\"myProp\"},\"constrainedBy\":\"Constrained By\"}]}]}}]}";
         assertEquals(expected, dtd.generateJSON());
 
     }
@@ -116,6 +121,11 @@ public class DTDTest {
         field.setOtherAvailable(true);
         field.setSectionName("Section");
 
+        StandardFields standardFields = new StandardFields();
+        standardFields.setSectionHeader("Section Header");
+        standardFields.setFields(new ArrayList<Field>(Arrays.asList(field)));
+        standardFields.setVersion(1.0);
+
         Section section = new Section();
         section.setSectionHeader("Section Header");
         section.setFields(new ArrayList<Field>(Arrays.asList(field)));
@@ -130,10 +140,10 @@ public class DTDTest {
         typeSpecificElementMap.put("Data Type 1", typeSpecificElement);
 
         dtd.setVersion(1.0);
-        dtd.setStandardFields(section);
+        dtd.setStandardFields(standardFields);
         dtd.setTypeSpecificElements(typeSpecificElementMap);
 
-        String expected = "{\"version\":1.0,\"standardFields\":{\"sectionHeader\":\"Section Header\",\"fields\":[{\"label\":\"Label\",\"type\":\"Type\",\"required\":true,\"fieldName\":\"Field Name\",\"validations\":[\"Validation1\",\"Validation2\"],\"otherAvailable\":true,\"alphaSort\":true,\"values\":[\"Value1\",\"Value2\"],\"constrainedBy\":\"Constrained By\"}]},\"typeSpecificElements\":[{\"Data Type 1\":{\"version\":1.0,\"sections\":[{\"sectionHeader\":\"Section Header\",\"fields\":[{\"label\":\"Label\",\"type\":\"Type\",\"required\":true,\"fieldName\":\"Field Name\",\"validations\":[\"Validation1\",\"Validation2\"],\"otherAvailable\":true,\"alphaSort\":true,\"values\":[\"Value1\",\"Value2\"],\"constrainedBy\":\"Constrained By\"}]}]}}]}";
+        String expected = "{\"version\":1.0,\"standardFields\":{\"sectionHeader\":\"Section Header\",\"fields\":[{\"label\":\"Label\",\"type\":\"Type\",\"required\":true,\"fieldName\":\"Field Name\",\"validations\":[\"Validation1\",\"Validation2\"],\"otherAvailable\":true,\"alphaSort\":true,\"values\":[\"Value1\",\"Value2\"],\"constrainedBy\":\"Constrained By\"}],\"version\":1.0},\"typeSpecificElements\":[{\"Data Type 1\":{\"version\":1.0,\"sections\":[{\"sectionHeader\":\"Section Header\",\"fields\":[{\"label\":\"Label\",\"type\":\"Type\",\"required\":true,\"fieldName\":\"Field Name\",\"validations\":[\"Validation1\",\"Validation2\"],\"otherAvailable\":true,\"alphaSort\":true,\"values\":[\"Value1\",\"Value2\"],\"constrainedBy\":\"Constrained By\"}]}]}}]}";
         assertEquals(expected, dtd.generateJSON());
 
     }
