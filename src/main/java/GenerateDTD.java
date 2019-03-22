@@ -95,7 +95,9 @@ public class GenerateDTD {
         fstream = new FileWriter(file, false);
         out = new BufferedWriter(fstream);
         ObjectMapper mapper = new ObjectMapper();
-        out.write(mapper.writeValueAsString(packageTypeIcons));
+        for (PackageTypeIcon packageTypeIcon: packageTypeIcons) {
+            out.write(mapper.writeValueAsString(packageTypeIcon));
+        }
         out.close();
     }
 }

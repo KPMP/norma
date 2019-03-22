@@ -19,7 +19,7 @@ public class PackageTypeIcon {
         return packageTypes;
     }
 
-    public void setPackageTypes(List<String> dataTypes) {
-        this.packageTypes = dataTypes;
+    public void setPackageTypes(List<String> packageTypes) {
+        this.packageTypes = packageTypes;
     }
 }
