@@ -1,10 +1,9 @@
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.BufferedWriter;
-
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
@@ -25,7 +24,7 @@ import com.google.api.services.sheets.v4.SheetsScopes;
 
 import dtd.DTD;
 import dtd.Field;
-import dtd.Section;
+import dtd.StandardFields;
 import dtd.TypeSpecificElement;
 import sheets.MetadataSheetParser;
 
@@ -73,15 +72,16 @@ public class GenerateDTD {
         DTD dtd = new DTD();
         MetadataSheetParser parser = new MetadataSheetParser(service, spreadsheetId);
         List<Field> standardFields = parser.getStandardFields();
-        Section standardFieldSection = new Section();
+        StandardFields standardFieldSection = new StandardFields();
         standardFieldSection.setSectionHeader(standardFields.get(0).getSectionName());
         standardFieldSection.setFields(standardFields);
+        standardFieldSection.setVersion(parser.getDatasetInformationVersion());
         dtd.setStandardFields(standardFieldSection);
         Map<String, TypeSpecificElement> typeSpecificElements = parser.getTypeSpecificElements();
         List<String> dataTypes = parser.convertTypeSpecificElementsToDataTypes(typeSpecificElements);
         List<Field> fields = parser.getAllFields(dataTypes);
         parser.populateTypeSpecificElements(typeSpecificElements, fields);
-        dtd.setVersion(parser.getVersion());
+        dtd.setVersion(parser.getMetadataVersion());
         dtd.setTypeSpecificElements(typeSpecificElements);
         File file = new File(DTD_Path + File.separator + "metadataDTD" + dtd.getVersion() + ".json");
         FileWriter fstream = new FileWriter(file, false);

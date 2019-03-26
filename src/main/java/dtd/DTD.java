@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class DTD {
 
     private Double version;
-    private Section standardFields;
+    private StandardFields standardFields;
     private Map<String, TypeSpecificElement> typeSpecificElements;
 
     public Double getVersion() {
@@ -34,11 +34,11 @@ public class DTD {
         this.typeSpecificElements = typeSpecificElements;
     }
 
-    public Section getStandardFields() {
+    public StandardFields getStandardFields() {
         return standardFields;
     }
 
-    public void setStandardFields(Section standardFields) {
+    public void setStandardFields(StandardFields standardFields) {
         this.standardFields = standardFields;
     }
 
