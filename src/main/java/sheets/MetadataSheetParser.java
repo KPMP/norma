@@ -45,14 +45,25 @@ public class MetadataSheetParser {
     private static final String CELL_RANGE_NOHEADER = "1:999";
     private static final String CELL_RANGE_HEADER = "2:999";
 
+    private static final String METADATA_VERSION_RANGE = "A2:A2";
+    private static final String DATASET_INFORMATION_VERSION_RANGE = "B2:B2";
+
+
 
     public MetadataSheetParser(Sheets service, String spreadSheetId) throws IOException {
         this.service = service;
         this.spreadsheetId = spreadSheetId;
     }
 
-    public Double getVersion() throws IOException {
-        String range = getRange(VERSION_SHEET, "A1:A1");
+    public Double getMetadataVersion() throws IOException {
+        String range = getRange(VERSION_SHEET, METADATA_VERSION_RANGE);
+        List <List<Object>> rows = getRows(range);
+        Double version = Double.parseDouble((String)rows.get(0).get(0));
+        return version;
+    }
+
+    public Double getDatasetInformationVersion() throws IOException {
+        String range = getRange(VERSION_SHEET, DATASET_INFORMATION_VERSION_RANGE);
         List <List<Object>> rows = getRows(range);
         Double version = Double.parseDouble((String)rows.get(0).get(0));
         return version;

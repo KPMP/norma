@@ -43,7 +43,7 @@ public class MetadataSheetParserTest {
     }
 
     @Test
-    public void testGetVersion() throws Exception {
+    public void testGetMetadataVersion() throws Exception {
         List<Object> row = new ArrayList<Object>(Arrays.asList("1.0"));
         List<List<Object>> rows = new ArrayList<List<Object>>(Arrays.asList(row));
         Spreadsheets spreadsheets = mock(Spreadsheets.class);
@@ -54,10 +54,28 @@ public class MetadataSheetParserTest {
 
         when(sheets.spreadsheets()).thenReturn(spreadsheets);
         when(spreadsheets.values()).thenReturn(values);
-        when(values.get("", "Version!A1:A1")).thenReturn(get);
+        when(values.get("", "Version!A2:A2")).thenReturn(get);
         when(get.execute()).thenReturn(valueRange);
 
-        assertEquals(1.0, parser.getVersion(), 0.001);
+        assertEquals(1.0, parser.getMetadataVersion(), 0.001);
+    }
+
+    @Test
+    public void testGetDatasetInformationVersion() throws Exception {
+        List<Object> row = new ArrayList<Object>(Arrays.asList("1.0"));
+        List<List<Object>> rows = new ArrayList<List<Object>>(Arrays.asList(row));
+        Spreadsheets spreadsheets = mock(Spreadsheets.class);
+        ValueRange valueRange = new ValueRange();
+        valueRange.setValues(rows);
+        Values values = mock(Values.class);
+        Get get = mock(Get.class);
+
+        when(sheets.spreadsheets()).thenReturn(spreadsheets);
+        when(spreadsheets.values()).thenReturn(values);
+        when(values.get("", "Version!B2:B2")).thenReturn(get);
+        when(get.execute()).thenReturn(valueRange);
+
+        assertEquals(1.0, parser.getDatasetInformationVersion(), 0.001);
     }
 
     @Test
