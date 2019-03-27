@@ -43,7 +43,7 @@
 				"fieldName": "experimentDate"
 			},
 			{
-				"label": "Dataset Type",
+				"label": "Package Type",
 				"type": "Drop-down",
 				"required": true,
 				"values": ["3-D tissue imaging", "Bulk RNA-Seq", "CODEX", "DNA Methylation", "Multiplex ISH", "Near-single-cell Proteomics", "Segmental miRNA", "Single-cell RNA-Seq", "Single-nucleus RNA-Seq", "Spatial Metabolomics", "Sub-segment RNA-Seq", "Sub-segmental Proteomics", "Whole Slide Images" ],
@@ -52,7 +52,7 @@
 				"fieldName": "packageType"
 			},
 			{
-				"label": "Dataset Type (Other)",
+				"label": "Package Type (Other)",
 				"type": "Text Field",
 				"required": true,
 				"linkedWith": "packageType",
