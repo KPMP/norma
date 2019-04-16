@@ -27,6 +27,10 @@ configurations.testCompile {
     exclude group: "org.slf4j", module: 'slf4j-simple'
 }
 
+test {
+    exclude '**/MetadataSheetValidatorTest'
+}
+
 task(runGenerateDTD, dependsOn: 'classes', type: JavaExec) {
     main = 'org.kpmp.GenerateDTD'
     classpath = sourceSets.main.runtimeClasspath
