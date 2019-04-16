@@ -1,4 +1,4 @@
-package dtd;
+package org.kpmp.dtd;
 
 public class StandardFields extends Section {
 

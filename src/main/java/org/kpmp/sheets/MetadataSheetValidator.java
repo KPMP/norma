@@ -1,8 +1,9 @@
-package sheets;
+package org.kpmp.sheets;
 
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.sheets.v4.Sheets;
-import dtd.Field;
-import dtd.TypeSpecificElement;
+import org.kpmp.dtd.Field;
+import org.kpmp.dtd.TypeSpecificElement;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -19,13 +20,14 @@ public class MetadataSheetValidator {
     private static final String TYPE_DROPDOWN = "Drop-down";
     private static final List<String> INPUT_TYPES = new ArrayList<>(Arrays.asList("Date", TYPE_DROPDOWN, "Multi-select", "Numeric", "Submitter Information", "Text Area", "Text Field"));
     private static final MessageFormat fieldNameCheck = new MessageFormat("Field \"{0}\" has no fieldName.");
-    private static final MessageFormat fieldValidationCheck = new MessageFormat("Field \"{0}\" has a validation but no additional props");
-    private static final MessageFormat inputTypeCheck = new MessageFormat("Field \"{0}\" has an invalid input type: {1}");
-    private static final MessageFormat linkedWithCheck = new MessageFormat("Field \"{0}\" is missing a Linked With value");
-    private static final MessageFormat dropdownCheck = new MessageFormat("Field \"{0}\" is a drop-down but missing values");
-    private static final MessageFormat displayWhenCheck = new MessageFormat("Field \"{0}\" Display When value ({1}) missing for \"{2}\"");
-    private static final MessageFormat fieldNameDuplicateCheck = new MessageFormat("The fieldName \"{0}\" in \"{1}\" already exists");
-
+    private static final MessageFormat fieldValidationCheck = new MessageFormat("Field \"{0}\" has a validation but no additional props.");
+    private static final MessageFormat inputTypeCheck = new MessageFormat("Field \"{0}\" has an invalid input type: {1}.");
+    private static final MessageFormat linkedWithCheck = new MessageFormat("Field \"{0}\" is missing a Linked With value.");
+    private static final MessageFormat dropdownCheck = new MessageFormat("Field \"{0}\" is a drop-down but missing values.");
+    private static final MessageFormat displayWhenCheck = new MessageFormat("Field \"{0}\" Display When value ({1}) missing for \"{2}\".");
+    private static final MessageFormat fieldNameDuplicateCheck = new MessageFormat("The fieldName \"{0}\" in \"{1}\" already exists.");
+    private static final MessageFormat dataTypeSheetCheck = new MessageFormat("No sheet exists for data type category {0}.");
+    private static final MessageFormat dataTypeSheetColumnCheck = new MessageFormat("No column exists in sheet {0} for data type {1}.");
 
     public MetadataSheetValidator(MetadataSheetParser parser) throws IOException {
         this.parser = parser;
@@ -63,7 +65,7 @@ public class MetadataSheetValidator {
                     log.error(linkedWithCheck.format(new Object[]{label}));
                 } else {
                     List<String> dropdownValues = dropDowns.get(field.getLinkedWithLabel());
-                    if (!dropdownValues.contains(field.getDisplayWhen())) {
+                    if (dropdownValues == null || !dropdownValues.contains(field.getDisplayWhen())) {
                         log.error(displayWhenCheck.format(new Object[]{label, field.getDisplayWhen(), field.getLinkedWithLabel()}));
                     }
                 }
@@ -100,7 +102,21 @@ public class MetadataSheetValidator {
         for (Map.Entry<String, TypeSpecificElement> entry : typeSpecificElements.entrySet()) {
             dataCategories.add(entry.getValue().getCategory());
         }
-        // check for a sheet name for each of these categories
+
+        for (Object dataTypeCategory: dataCategories) {
+            String dataTypeCategoryString = (String) dataTypeCategory;
+            try {
+                Map<String, Object> columnMap = parser.getColumnMap(dataTypeCategoryString);
+                for (Map.Entry<String, TypeSpecificElement> entry : typeSpecificElements.entrySet()) {
+                    String dataType = entry.getKey();
+                    if (entry.getValue().getCategory().equals(dataTypeCategory) && !columnMap.containsKey(dataType)) {
+                        log.error(dataTypeSheetColumnCheck.format(new Object[] { dataTypeCategoryString, dataType }));
+                    }
+                }
+            } catch (GoogleJsonResponseException e) {
+                log.error(dataTypeSheetCheck.format(new Object[] { dataTypeCategoryString }));
+            }
+        }
     }
 
 

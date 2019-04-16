@@ -1,3 +1,4 @@
+package org.kpmp;
 
 import java.io.IOException;
 
@@ -5,9 +6,9 @@ import java.security.GeneralSecurityException;
 
 import com.google.api.services.sheets.v4.Sheets;
 
-import sheets.MetadataSheetParser;
-import sheets.MetadataSheetValidator;
-import sheets.SheetsService;
+import org.kpmp.sheets.MetadataSheetParser;
+import org.kpmp.sheets.MetadataSheetValidator;
+import org.kpmp.sheets.SheetsService;
 
 public class ValidateMetadataSheet {
 

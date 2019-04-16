@@ -1,13 +1,4 @@
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.security.GeneralSecurityException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+package org.kpmp;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -21,12 +12,17 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
+import org.kpmp.dtd.DTD;
+import org.kpmp.dtd.Field;
+import org.kpmp.dtd.StandardFields;
+import org.kpmp.dtd.TypeSpecificElement;
+import org.kpmp.sheets.MetadataSheetParser;
 
-import dtd.DTD;
-import dtd.Field;
-import dtd.StandardFields;
-import dtd.TypeSpecificElement;
-import sheets.MetadataSheetParser;
+import java.io.*;
+import java.security.GeneralSecurityException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class GenerateDTD {
     private static final String APPLICATION_NAME = "KPMP Convert Metadata Sheet to DTD ";

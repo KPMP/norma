@@ -1,4 +1,4 @@
-package sheets;
+package org.kpmp.sheets;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,9 +12,9 @@ import java.util.Map;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.ValueRange;
 
-import dtd.Field;
-import dtd.Section;
-import dtd.TypeSpecificElement;
+import org.kpmp.dtd.Field;
+import org.kpmp.dtd.Section;
+import org.kpmp.dtd.TypeSpecificElement;
 
 public class MetadataSheetParser {
 
@@ -93,7 +93,7 @@ public class MetadataSheetParser {
 
     public List<Field> getAllFields(List<String> dataTypes) throws IOException {
         Map<String, List<String>> dropdownValueMap = getDropdownValues();
-        List<Field> fields = new ArrayList<dtd.Field>();
+        List<Field> fields = new ArrayList<org.kpmp.dtd.Field>();
         fields.addAll(getFieldsInSheet(TRANSCRIPTOMICS_SHEET, dataTypes, dropdownValueMap));
         fields.addAll(getFieldsInSheet(PROTEOMICS_SHEET, dataTypes, dropdownValueMap));
         return fields;
@@ -194,7 +194,7 @@ public class MetadataSheetParser {
         return dataTypeMembership;
     }
 
-    private Map<String, Object> getColumnMap(String sheetName) throws IOException {
+    public Map<String, Object> getColumnMap(String sheetName) throws IOException {
         Map<String, Object> columnMap = new LinkedHashMap<String, Object>();
         String range = sheetName + "!1:1";
         List<List<Object>> values = getRows(range);
@@ -233,7 +233,7 @@ public class MetadataSheetParser {
         return booleanValue;
     }
 
-    private List<List<Object>> getRows(String range) throws IOException {
+    public List<List<Object>> getRows(String range) throws IOException {
         ValueRange response = service.spreadsheets().values()
                 .get(this.spreadsheetId, range)
                 .execute();

@@ -1,4 +1,4 @@
-package sheets;
+package org.kpmp.sheets;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -26,9 +26,9 @@ import com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values;
 import com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values.Get;
 import com.google.api.services.sheets.v4.model.ValueRange;
 
-import dtd.Field;
-import dtd.Section;
-import dtd.TypeSpecificElement;
+import org.kpmp.dtd.Field;
+import org.kpmp.dtd.Section;
+import org.kpmp.dtd.TypeSpecificElement;
 
 public class MetadataSheetParserTest {
 
@@ -106,7 +106,7 @@ public class MetadataSheetParserTest {
         assertEquals("Type", field.getType());
         assertEquals(true, field.getRequired());
         assertEquals(new String[]{"valid1","valid2"}, field.getValidations());
-        assertEquals("Linky", field.getLinkedWith());
+        assertEquals("Linky", field.getLinkedWithLabel());
         assertEquals("When?", field.getDisplayWhen());
         assertEquals("Namey Name", field.getFieldName());
         assertEquals("{\"Proppy Prop\": \"Proppy\"}", field.getAdditionalProps());
@@ -206,10 +206,10 @@ public class MetadataSheetParserTest {
 
         when(sheets.spreadsheets()).thenReturn(spreadsheets);
         when(spreadsheets.values()).thenReturn(values);
-        when(values.get("", "Range")).thenReturn(get);
+        when(values.get("", "Drop-down Values!1:999")).thenReturn(get);
         when(get.execute()).thenReturn(valueRange);
 
-        Map<String, List<String>> dropDownValues = parser.getDropdownValues("Range");
+        Map<String, List<String>> dropDownValues = parser.getDropdownValues();
         assertEquals(dropDownValues.get("Property1").get(0), "Value1");
         assertEquals(dropDownValues.get("Property1").get(1), "Value2");
         assertEquals(dropDownValues.get("Property2").get(0), "Value1");
