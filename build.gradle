@@ -28,7 +28,7 @@ configurations.testCompile {
 }
 
 test {
-    exclude '**/MetadataSheetValidatorTest'
+    exclude 'org/kpmp/MetadataSheetValidatorTest'
 }
 
 task(runGenerateDTD, dependsOn: 'classes', type: JavaExec) {
