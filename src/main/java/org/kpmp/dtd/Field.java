@@ -1,4 +1,4 @@
-package dtd;
+package org.kpmp.dtd;
 
 import java.util.List;
 import java.util.Map;
@@ -15,6 +15,8 @@ public class Field {
     private String fieldName;
     private String[] validations;
     private Boolean otherAvailable;
+    @JsonIgnore
+    private String linkedWithLabel;
     private String linkedWith;
     private String displayWhen;
     private Boolean alphaSort;
@@ -123,6 +125,14 @@ public class Field {
 
     public void setConstraints(Map<String, String[]> constraints) {
         this.constraints = constraints;
+    }
+
+    public String getLinkedWithLabel() {
+        return linkedWithLabel;
+    }
+
+    public void setLinkedWithLabel(String linkedWithLabel) {
+        this.linkedWithLabel = linkedWithLabel;
     }
 
     public String getLinkedWith() {

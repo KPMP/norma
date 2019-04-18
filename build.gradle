@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'application'
 
-mainClassName = 'GenerateDTD'
+mainClassName = 'org.kpmp.GenerateDTD'
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 version = '1.0'
@@ -17,6 +17,27 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.9.8'
     compile 'org.apache.commons:commons-lang3:3.0'
+    compile 'org.slf4j:slf4j-simple:1.6.1'
     testCompile 'junit:junit:4.12'
     testCompile "org.mockito:mockito-core:1.+"
+    testCompile 'uk.org.lidalia:slf4j-test:1.1.0'
 }
+
+configurations.testCompile {
+    exclude group: "org.slf4j", module: 'slf4j-simple'
+}
+
+test {
+    exclude '**/MetadataSheetValidatorTest.class'
+}
+
+task(runGenerateDTD, dependsOn: 'classes', type: JavaExec) {
+    main = 'org.kpmp.GenerateDTD'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task(runValidateMetatdataSheet, dependsOn: 'classes', type: JavaExec) {
+    main = 'org.kpmp.ValidateMetadataSheet'
+    classpath = sourceSets.main.runtimeClasspath
+}
+

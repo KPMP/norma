@@ -1,4 +1,4 @@
-package sheets;
+package org.kpmp.sheets;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,9 +12,9 @@ import java.util.Map;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.ValueRange;
 
-import dtd.Field;
-import dtd.Section;
-import dtd.TypeSpecificElement;
+import org.kpmp.dtd.Field;
+import org.kpmp.dtd.Section;
+import org.kpmp.dtd.TypeSpecificElement;
 
 public class MetadataSheetParser {
 
@@ -87,13 +87,13 @@ public class MetadataSheetParser {
 
     public List<Field> getStandardFields() throws IOException {
         String dropdownRange = getRange(VALUES_SHEET, CELL_RANGE_NOHEADER);
-        Map<String, List<String>> dropdownValueMap = getDropdownValues(dropdownRange);
+        Map<String, List<String>> dropdownValueMap = getDropdownValues();
         return getFieldsInSheet(GENERAL_INFORMATION_SHEET, new ArrayList<String>(), dropdownValueMap);
     }
 
     public List<Field> getAllFields(List<String> dataTypes) throws IOException {
-        Map<String, List<String>> dropdownValueMap = getDropdownValues(getRange(VALUES_SHEET, CELL_RANGE_NOHEADER));
-        List<Field> fields = new ArrayList<dtd.Field>();
+        Map<String, List<String>> dropdownValueMap = getDropdownValues();
+        List<Field> fields = new ArrayList<org.kpmp.dtd.Field>();
         fields.addAll(getFieldsInSheet(TRANSCRIPTOMICS_SHEET, dataTypes, dropdownValueMap));
         fields.addAll(getFieldsInSheet(PROTEOMICS_SHEET, dataTypes, dropdownValueMap));
         return fields;
@@ -130,7 +130,7 @@ public class MetadataSheetParser {
             field.setDataTypes(dataTypeMembership);
             if (field.getType().equals(DROP_DOWN_TYPE_VALUE) || field.getType().equals(MULTI_SELECT_TYPE_VALUE) && dropdownValueMap.containsKey(field.getLabel())) {
                 List<String> values = dropdownValueMap.get(field.getLabel());
-                if(values.contains(OTHER_VALUE)) {
+                if(values != null && values.contains(OTHER_VALUE)) {
                     field.setOtherAvailable(true);
                     values.remove(OTHER_VALUE);
                 }
@@ -140,9 +140,9 @@ public class MetadataSheetParser {
         }
 
         for (Field field : fields) {
-            if (field.getLinkedWith() != null) {
+            if (field.getLinkedWithLabel() != null) {
                 for (Field field2: fields) {
-                    if (field.getLinkedWith().equals(field2.getLabel())) {
+                    if (field.getLinkedWithLabel().equals(field2.getLabel())) {
                         field.setLinkedWith(field2.getFieldName());
                     }
                 }
@@ -152,7 +152,8 @@ public class MetadataSheetParser {
         return fields;
     }
 
-    public Map<String, List<String>> getDropdownValues(String range) throws IOException {
+    public Map<String, List<String>> getDropdownValues() throws IOException {
+        String range = getRange(VALUES_SHEET, CELL_RANGE_NOHEADER);
         Map<String, List<String>> dropDownValueMap = new HashMap<String, List<String>>();
         List<List<Object>> rows = getRows(range);
         for (List row : rows) {
@@ -172,7 +173,7 @@ public class MetadataSheetParser {
         field.setType((String) metadataRow.get(TYPE_COLUMN_KEY));
         field.setLabel((String) metadataRow.get(LABEL_COLUMN_KEY));
         field.setAdditionalProps((String) metadataRow.get(ADDITIONAL_PROPS_COLUMN_KEY));
-        field.setLinkedWith((String) metadataRow.get(LINKED_WITH_COLUMN_KEY));
+        field.setLinkedWithLabel((String) metadataRow.get(LINKED_WITH_COLUMN_KEY));
         field.setFieldName((String) metadataRow.get(FIELD_NAME_COLUMN_KEY));
         field.setRequired(convertToBoolean((String) metadataRow.get(REQUIRED_COLUMN_KEY)));
         field.setDisplayWhen((String) metadataRow.get(DISPLAY_WHEN_COLUMN_KEY));
@@ -193,7 +194,7 @@ public class MetadataSheetParser {
         return dataTypeMembership;
     }
 
-    private Map<String, Object> getColumnMap(String sheetName) throws IOException {
+    public Map<String, Object> getColumnMap(String sheetName) throws IOException {
         Map<String, Object> columnMap = new LinkedHashMap<String, Object>();
         String range = sheetName + "!1:1";
         List<List<Object>> values = getRows(range);
@@ -232,7 +233,7 @@ public class MetadataSheetParser {
         return booleanValue;
     }
 
-    private List<List<Object>> getRows(String range) throws IOException {
+    public List<List<Object>> getRows(String range) throws IOException {
         ValueRange response = service.spreadsheets().values()
                 .get(this.spreadsheetId, range)
                 .execute();

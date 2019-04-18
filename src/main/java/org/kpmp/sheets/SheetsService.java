@@ -1,13 +1,4 @@
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.security.GeneralSecurityException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+package org.kpmp.sheets;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -22,14 +13,16 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 
-import dtd.DTD;
-import dtd.Field;
-import dtd.StandardFields;
-import dtd.TypeSpecificElement;
-import sheets.MetadataSheetParser;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.security.GeneralSecurityException;
+import java.util.Collections;
+import java.util.List;
 
-public class GenerateDTD {
-    private static final String APPLICATION_NAME = "KPMP Convert Metadata Sheet to DTD ";
+public class SheetsService {
+
+    private static final String APPLICATION_NAME = "KPMP Metadata Sheet Tools";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
     private static final String DTD_Path = "dtds";
@@ -49,7 +42,7 @@ public class GenerateDTD {
      */
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
         // Load client secrets.
-        InputStream in = GenerateDTD.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+        InputStream in = SheetsService.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
         // Build flow and trigger user authorization request.
@@ -62,31 +55,13 @@ public class GenerateDTD {
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
-    public static void main(String... args) throws IOException, GeneralSecurityException {
+    public static Sheets getService() throws IOException, GeneralSecurityException {
         // Build a new authorized API client service.
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         final String spreadsheetId = "1R40Kl00sr1WskdiD7lXgEaG81jkkwH8xiSxEg0LSCFY";
         Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
-        DTD dtd = new DTD();
-        MetadataSheetParser parser = new MetadataSheetParser(service, spreadsheetId);
-        List<Field> standardFields = parser.getStandardFields();
-        StandardFields standardFieldSection = new StandardFields();
-        standardFieldSection.setSectionHeader(standardFields.get(0).getSectionName());
-        standardFieldSection.setFields(standardFields);
-        standardFieldSection.setVersion(parser.getDatasetInformationVersion());
-        dtd.setStandardFields(standardFieldSection);
-        Map<String, TypeSpecificElement> typeSpecificElements = parser.getTypeSpecificElements();
-        List<String> dataTypes = parser.convertTypeSpecificElementsToDataTypes(typeSpecificElements);
-        List<Field> fields = parser.getAllFields(dataTypes);
-        parser.populateTypeSpecificElements(typeSpecificElements, fields);
-        dtd.setVersion(parser.getMetadataVersion());
-        dtd.setTypeSpecificElements(typeSpecificElements);
-        File file = new File(DTD_Path + File.separator + "metadataDTD" + dtd.getVersion() + ".json");
-        FileWriter fstream = new FileWriter(file, false);
-        BufferedWriter out = new BufferedWriter(fstream);
-        out.write(dtd.generateJSON());
-        out.close();
+        return service;
     }
 }

@@ -1,4 +1,4 @@
-package dtd;
+package org.kpmp.dtd;
 
 import java.util.ArrayList;
 import java.util.Map;
