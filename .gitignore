@@ -11,3 +11,7 @@ build
 *.log.*
 *.log
 **.DS_Store
+src/main/resources/credentials.json
+tokens/**
+.classpath
+.settings/**
