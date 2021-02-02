@@ -1,0 +1,757 @@
+{
+	"version": 1.0,
+	"standardFields": {
+		"sectionHeader": "Dataset Information",
+		"fields": [
+			{
+				"label": "Submitted By",
+				"type": "Submitter Information",
+				"required": true
+			},
+			{
+				"label": "TIS Name",
+				"type": "Drop-down",
+				"required": true,
+				"fieldName": "tisName",
+				"values": [
+					"IU/OSU",
+					"Michigan/Broad/Princeton",
+					"UCSD/WashU",
+					"UCSF/Stanford",
+					"UTHSA/EMBL/PNNL/UCSD"
+				]
+			},
+			{
+				"label": "Specimen ID",
+				"type": "Text Field",
+				"required": true,
+				"fieldName": "subjectId",
+				"additionalProps": {
+					"placeholderText": "If biopsy tissue, enter SpecTrack Specimen ID"
+				}
+			},
+			{
+				"label": "TIS Internal Experiment ID",
+				"type": "Text Field",
+				"required": true,
+				"fieldName": "tisInternalExperimentID"
+			},
+			{
+				"label": "Data Generator(s)",
+				"type": "Text Field",
+				"required": true,
+				"fieldName": "dataGenerators"
+			},
+			{
+				"label": "Package Type",
+				"type": "Drop-down",
+				"required": true,
+				"fieldName": "packageType",
+				"otherAvailable": true,
+				"values": [
+					"Bulk total/mRNA",
+					"Bulk microRNA",
+					"Segmental miRNA",
+					"Sub-segmental RNA-Seq",
+					"Single-cell RNA-Seq",
+					"Single-nucleus RNA-Seq",
+					"Bulk Proteomics",
+					"Sub-segmental Proteomics",
+					"Near-single-cell Proteomics",
+					"Spatial Metabolomics",
+					"3-D tissue imaging",
+					"Multiplex ISH",
+					"CODEX",
+					"Whole Slide Images",
+					"DNA Methylation",
+					"Pilot 3 Receipt Picture"
+				]
+			},
+			{
+				"label": "Package Type (Other)",
+				"type": "Text Field",
+				"required": true,
+				"fieldName": "packageTypeOther",
+				"linkedWith": "packageType",
+				"displayWhen": "Other"
+			},
+			{
+				"label": "Protocol",
+				"type": "Drop-down",
+				"required": true,
+				"fieldName": "protocol",
+				"otherAvailable": true,
+				"values": [
+					"Pilot 1",
+					"Pilot 2",
+					"Pilot 3",
+					"Protocol v1: Pathology MOP v1",
+					"Protocol v1: TIS MOP v1"
+				],
+				"additionalProps": {
+					"cols": {
+						"colLg": 8,
+						"colMd": 12,
+						"colSm": 12
+					}
+				}
+			},
+			{
+				"label": "Dataset Description",
+				"type": "Text Area",
+				"required": true,
+				"fieldName": "description"
+			}
+		],
+		"version": 1.0
+	},
+	"typeSpecificElements": [
+		{
+			"Bulk Proteomics": {
+				"version": 1.0,
+				"sections": [
+					{
+						"sectionHeader": "Protein Extraction & Digestion",
+						"fields": [
+							{
+								"label": "Tissue Protein Extraction Date",
+								"type": "Date",
+								"required": true,
+								"fieldName": "tissueExtractionDate",
+								"validations": [
+									"no future dates"
+								],
+								"additionalProps": {
+									"placeholderText": "yyyy-mm-dd"
+								}
+							},
+							{
+								"label": "Was Digestion Standard Used",
+								"type": "Drop-down",
+								"required": true,
+								"fieldName": "wasDigestionEnzymeUsed",
+								"values": [
+									"Yes",
+									"No"
+								]
+							},
+							{
+								"label": "Digestion Enzyme",
+								"type": "Multi-select",
+								"required": true,
+								"fieldName": "digestionEnzyme",
+								"values": [
+									"ArgC",
+									"AspN",
+									"Chymotrypsin",
+									"GluC",
+									"LysC",
+									"Pepsin",
+									"Trypsin"
+								]
+							},
+							{
+								"label": "Digestion Buffer",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "digestionBuffer"
+							},
+							{
+								"label": "Protein Yield",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "proteinYield",
+								"additionalProps": {
+									"placeholderText": "Enter a valid number or N/A"
+								}
+							},
+							{
+								"label": "Protein Yield Unit",
+								"type": "Drop-down",
+								"required": true,
+								"fieldName": "proteinYieldUnit",
+								"values": [
+									"µg/mL",
+									"mg/mL",
+									"µg/µL",
+									"N/A"
+								]
+							},
+							{
+								"label": "Protein Reduction Agent",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "proteinReductionAgent"
+							},
+							{
+								"label": "Alkylation Agent",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "alkylationAgent"
+							},
+							{
+								"label": "Was Automation Used",
+								"type": "Drop-down",
+								"required": true,
+								"fieldName": "wasAutomationUsed",
+								"values": [
+									"Yes",
+									"No"
+								]
+							},
+							{
+								"label": "Automation Method",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "automationMethod",
+								"linkedWith": "wasAutomationUsed",
+								"displayWhen": "Yes"
+							},
+							{
+								"label": "Sample Clean-up Method",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "sampleCleanupMethod"
+							},
+							{
+								"label": "Protein Extraction & Digestion Comments",
+								"type": "Text Area",
+								"required": false,
+								"fieldName": "proteinExtractionComments"
+							}
+						]
+					},
+					{
+						"sectionHeader": "Mass Spectrometry",
+						"fields": [
+							{
+								"label": "Spectrometry Center",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "spectrometryCenter"
+							},
+							{
+								"label": "MS Instrument",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "msInstruments"
+							},
+							{
+								"label": "MS Instrument Software / Version",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "msInstrumentsSoftware"
+							},
+							{
+								"label": "Spectrometry Date",
+								"type": "Date",
+								"required": true,
+								"fieldName": "spectrometryDate",
+								"validations": [
+									"no future dates"
+								],
+								"additionalProps": {
+									"placeholderText": "yyyy-mm-dd"
+								}
+							},
+							{
+								"label": "Ionization Method",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "ionizationMethod"
+							},
+							{
+								"label": "LC Instrument",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "lcInstrument"
+							},
+							{
+								"label": "LC Column",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "lcColumn"
+							},
+							{
+								"label": "LC Column Flow Rate",
+								"type": "Numeric",
+								"required": true,
+								"fieldName": "lcColumnFlowRate",
+								"additionalProps": {
+									"placeholderText": "Enter a valid number"
+								}
+							},
+							{
+								"label": "Internal Calibration Standard",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "internalCalibrationStandard"
+							},
+							{
+								"label": "Attached Internal Calibration Report File Name",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "attachedInternalCalibrationReportName"
+							},
+							{
+								"label": "Mass Spectrometry Comments",
+								"type": "Text Area",
+								"required": false,
+								"fieldName": "massSpectrometryComments"
+							}
+						]
+					},
+					{
+						"sectionHeader": "Proteomics Analysis",
+						"fields": [
+							{
+								"label": "Primary Signal Processing Platform",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "primarySignalProcessingPlatform"
+							},
+							{
+								"label": "Primary Signal Processing Platform Version",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "primarySignalProcessingPlatformVersion"
+							},
+							{
+								"label": "Analyte Detection Mode",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "analyteDetectionMode"
+							},
+							{
+								"label": "Reference Database",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "referenceDatabase"
+							},
+							{
+								"label": "Reference Database Version / Download Date",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "referenceDatabaseVersion"
+							},
+							{
+								"label": "Static Modification AA(+/-amu)",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "staticModificationAA"
+							},
+							{
+								"label": "Differential ModificationAA(+/-amu)",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "differentialModificationAA"
+							},
+							{
+								"label": "Data Filtering for Proteins (amu)",
+								"type": "Numeric",
+								"required": true,
+								"fieldName": "dataFiteringProteins",
+								"additionalProps": {
+									"placeholderText": "Enter a valid number"
+								}
+							},
+							{
+								"label": "Data Filtering for Peptides (amu)",
+								"type": "Numeric",
+								"required": true,
+								"fieldName": "dataFiteringPeptides",
+								"additionalProps": {
+									"placeholderText": "Enter a valid number"
+								}
+							},
+							{
+								"label": "Number of Proteins Identified",
+								"type": "Numeric",
+								"required": true,
+								"fieldName": "numProteinsIdentified",
+								"additionalProps": {
+									"placeholderText": "Enter a valid number"
+								}
+							},
+							{
+								"label": "Proteomics Analysis Comments",
+								"type": "Text Area",
+								"required": false,
+								"fieldName": "proteomicsAnalysisComments"
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"Near-single-cell Proteomics": {
+				"version": 1.0,
+				"sections": [
+					{
+						"sectionHeader": "Tissue Processing",
+						"fields": [
+							{
+								"label": "Type of Tissue Sectioned",
+								"type": "Drop-down",
+								"required": true,
+								"fieldName": "typeTissueSectioned",
+								"values": [
+									"OCT Frozen",
+									"FFPE"
+								]
+							},
+							{
+								"label": "Tissue Sectioning Date",
+								"type": "Date",
+								"required": true,
+								"fieldName": "tissueSectioningDate",
+								"validations": [
+									"no future dates"
+								],
+								"additionalProps": {
+									"placeholderText": "yyyy-mm-dd"
+								}
+							},
+							{
+								"label": "Tissue Processing Instrument",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "tissueProcessingInstrument"
+							},
+							{
+								"label": "Tissue Processing Instrument Software / Version",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "tissueProcessingInstrumentSoftware"
+							},
+							{
+								"label": "Tissue Segmention / Dissociation Date",
+								"type": "Date",
+								"required": true,
+								"fieldName": "tissueSegmentationDate",
+								"validations": [
+									"no future dates"
+								],
+								"additionalProps": {
+									"placeholderText": "yyyy-mm-dd"
+								}
+							},
+							{
+								"label": "Marker Used for Dissection",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "dissectionMarker"
+							},
+							{
+								"label": "Area Dissected / Processed (Square Microns)",
+								"type": "Numeric",
+								"required": true,
+								"fieldName": "areaDissected",
+								"additionalProps": {
+									"placeholderText": "Enter a valid number"
+								}
+							},
+							{
+								"label": "Calculated Volume Dissected / Processed",
+								"type": "Numeric",
+								"required": true,
+								"fieldName": "calculatedVolumeDissected",
+								"additionalProps": {
+									"placeholderText": "Enter a valid number"
+								}
+							},
+							{
+								"label": "Calculated Volume Dissected / Processed Units",
+								"type": "Drop-down",
+								"required": true,
+								"fieldName": "calculatedVolumeDissectedUnits",
+								"values": [
+									"ng/µL",
+									"µg/µL"
+								]
+							},
+							{
+								"label": "Tissue Processing Comments",
+								"type": "Text Area",
+								"required": false,
+								"fieldName": "tissueProcessingComments"
+							}
+						]
+					},
+					{
+						"sectionHeader": "Protein Extraction & Digestion",
+						"fields": [
+							{
+								"label": "Tissue Protein Extraction Date",
+								"type": "Date",
+								"required": true,
+								"fieldName": "tissueExtractionDate",
+								"validations": [
+									"no future dates"
+								],
+								"additionalProps": {
+									"placeholderText": "yyyy-mm-dd"
+								}
+							},
+							{
+								"label": "Was Digestion Standard Used",
+								"type": "Drop-down",
+								"required": true,
+								"fieldName": "wasDigestionEnzymeUsed",
+								"values": [
+									"Yes",
+									"No"
+								]
+							},
+							{
+								"label": "Digestion Enzyme",
+								"type": "Multi-select",
+								"required": true,
+								"fieldName": "digestionEnzyme",
+								"values": [
+									"ArgC",
+									"AspN",
+									"Chymotrypsin",
+									"GluC",
+									"LysC",
+									"Pepsin",
+									"Trypsin"
+								]
+							},
+							{
+								"label": "Digestion Buffer",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "digestionBuffer"
+							},
+							{
+								"label": "Protein Yield",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "proteinYield",
+								"additionalProps": {
+									"placeholderText": "Enter a valid number or N/A"
+								}
+							},
+							{
+								"label": "Protein Yield Unit",
+								"type": "Drop-down",
+								"required": true,
+								"fieldName": "proteinYieldUnit",
+								"values": [
+									"µg/mL",
+									"mg/mL",
+									"µg/µL",
+									"N/A"
+								]
+							},
+							{
+								"label": "Protein Reduction Agent",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "proteinReductionAgent"
+							},
+							{
+								"label": "Alkylation Agent",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "alkylationAgent"
+							},
+							{
+								"label": "Was Automation Used",
+								"type": "Drop-down",
+								"required": true,
+								"fieldName": "wasAutomationUsed",
+								"values": [
+									"Yes",
+									"No"
+								]
+							},
+							{
+								"label": "Automation Method",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "automationMethod",
+								"linkedWith": "wasAutomationUsed",
+								"displayWhen": "Yes"
+							},
+							{
+								"label": "Sample Clean-up Method",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "sampleCleanupMethod"
+							},
+							{
+								"label": "Protein Extraction & Digestion Comments",
+								"type": "Text Area",
+								"required": false,
+								"fieldName": "proteinExtractionComments"
+							}
+						]
+					},
+					{
+						"sectionHeader": "Mass Spectrometry",
+						"fields": [
+							{
+								"label": "Spectrometry Center",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "spectrometryCenter"
+							},
+							{
+								"label": "MS Instrument",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "msInstruments"
+							},
+							{
+								"label": "MS Instrument Software / Version",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "msInstrumentsSoftware"
+							},
+							{
+								"label": "Spectrometry Date",
+								"type": "Date",
+								"required": true,
+								"fieldName": "spectrometryDate",
+								"validations": [
+									"no future dates"
+								],
+								"additionalProps": {
+									"placeholderText": "yyyy-mm-dd"
+								}
+							},
+							{
+								"label": "Ionization Method",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "ionizationMethod"
+							},
+							{
+								"label": "LC Instrument",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "lcInstrument"
+							},
+							{
+								"label": "LC Column",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "lcColumn"
+							},
+							{
+								"label": "LC Column Flow Rate",
+								"type": "Numeric",
+								"required": true,
+								"fieldName": "lcColumnFlowRate",
+								"additionalProps": {
+									"placeholderText": "Enter a valid number"
+								}
+							},
+							{
+								"label": "Internal Calibration Standard",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "internalCalibrationStandard"
+							},
+							{
+								"label": "Attached Internal Calibration Report File Name",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "attachedInternalCalibrationReportName"
+							},
+							{
+								"label": "Mass Spectrometry Comments",
+								"type": "Text Area",
+								"required": false,
+								"fieldName": "massSpectrometryComments"
+							}
+						]
+					},
+					{
+						"sectionHeader": "Proteomics Analysis",
+						"fields": [
+							{
+								"label": "Primary Signal Processing Platform",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "primarySignalProcessingPlatform"
+							},
+							{
+								"label": "Primary Signal Processing Platform Version",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "primarySignalProcessingPlatformVersion"
+							},
+							{
+								"label": "Analyte Detection Mode",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "analyteDetectionMode"
+							},
+							{
+								"label": "Reference Database",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "referenceDatabase"
+							},
+							{
+								"label": "Reference Database Version / Download Date",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "referenceDatabaseVersion"
+							},
+							{
+								"label": "Static Modification AA(+/-amu)",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "staticModificationAA"
+							},
+							{
+								"label": "Differential ModificationAA(+/-amu)",
+								"type": "Text Field",
+								"required": true,
+								"fieldName": "differentialModificationAA"
+							},
+							{
+								"label": "Data Filtering for Proteins (amu)",
+								"type": "Numeric",
+								"required": true,
+								"fieldName": "dataFiteringProteins",
+								"additionalProps": {
+									"placeholderText": "Enter a valid number"
+								}
+							},
+							{
+								"label": "Data Filtering for Peptides (amu)",
+								"type": "Numeric",
+								"required": true,
+								"fieldName": "dataFiteringPeptides",
+								"additionalProps": {
+									"placeholderText": "Enter a valid number"
+								}
+							},
+							{
+								"label": "Number of Proteins Identified",
+								"type": "Numeric",
+								"required": true,
+								"fieldName": "numProteinsIdentified",
+								"additionalProps": {
+									"placeholderText": "Enter a valid number"
+								}
+							},
+							{
+								"label": "Proteomics Analysis Comments",
+								"type": "Text Area",
+								"required": false,
+								"fieldName": "proteomicsAnalysisComments"
+							}
+						]
+					}
+				]
+			}
+		}
+	]
+}
